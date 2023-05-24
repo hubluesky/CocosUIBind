@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "938ecbe6-4038-42b2-8019-cf78d74e5bbb",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/Views/RegisterView.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

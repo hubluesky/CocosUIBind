@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "fe665982-7c2c-49d7-8d06-a76b0222e24a",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/Storage/Serializable.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

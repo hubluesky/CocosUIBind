@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "98f932ce-0227-47b7-aaf1-8c1e56aa55ec",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/Resource/AssetManager.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

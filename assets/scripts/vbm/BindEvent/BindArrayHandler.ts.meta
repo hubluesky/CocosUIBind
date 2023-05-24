@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "ee722b58-d30b-466e-9f22-8005bd1b7d98",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/BindEvent/BindArrayHandler.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

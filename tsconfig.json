@@ -4,6 +4,11 @@
 
   /* Add your custom configuration here. */
   "compilerOptions": {
-    "strict": false
+    "strict": false,
+    "paths": {
+      "common/*": [
+        "./assets/scripts/common/*"
+      ]
+    }
   }
 }

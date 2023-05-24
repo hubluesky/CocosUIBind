@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "d97fe62d-9834-479a-863a-ff874b26442a",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/BindEvent/BindUIComponent.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

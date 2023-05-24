@@ -1,0 +1,16 @@
+{
+  "ver": "4.0.1",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "985a0789-fe9b-4036-ae7a-16d02f0c2384",
+  "files": [
+    ".js",
+    ".trans"
+  ],
+  "subMetas": {},
+  "userData": {
+    "importAsPlugin": false,
+    "moduleId": "project:///assets/Script/Framework/Core/Setup/SetupConfig.js",
+    "importerSettings": 0
+  }
+}

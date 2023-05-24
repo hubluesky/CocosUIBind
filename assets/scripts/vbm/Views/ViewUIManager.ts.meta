@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "e80d4846-13ca-4474-b8d6-77c36c13e47b",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/Views/ViewUIManager.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

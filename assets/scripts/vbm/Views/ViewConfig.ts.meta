@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "fba50e6f-f492-4b63-8bb0-91ccb941e60c",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/Views/ViewConfig.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

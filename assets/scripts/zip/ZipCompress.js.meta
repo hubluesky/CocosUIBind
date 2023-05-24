@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "javascript",
+  "imported": true,
+  "uuid": "b8001075-f69a-4845-a3a0-566898e0fbf6",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/Zip/ZipCompress.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}
