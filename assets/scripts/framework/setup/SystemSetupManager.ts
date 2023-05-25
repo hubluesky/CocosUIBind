@@ -3,6 +3,7 @@ import { CustomLoadTask } from "../Loading/LoadingManager";
 import SetupConfig from "./SetupConfig";
 
 /**
+ * 注册系统启动函数。
  *  It must a static function
  */
 export function registerSystemSetup(priority: number) {
@@ -11,14 +12,18 @@ export function registerSystemSetup(priority: number) {
     };
 }
 
-export interface SetupSystem {
+/** 系统启动统一接口 */
+export interface ISetupSystem {
     readonly priority: number;
     readonly name: string;
     readonly initFunction: Action<[SetupConfig]>;
 }
 
+/**
+ * 系统启动管理器
+ */
 export default class SystemSetupManager {
-    public static readonly setupSystemFunctions: SetupSystem[] = [];
+    public static readonly setupSystemFunctions: ISetupSystem[] = [];
 
     public static registerSetup(priority: number, name: string, initFunction: Action<[SetupConfig]>): void {
         SystemSetupManager.setupSystemFunctions.push({ priority, name, initFunction });

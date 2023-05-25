@@ -1,7 +1,7 @@
 import { Component } from "cc";
 import BindEvent from "./BindEvent";
 import BindUIHandlerManager from "./BindUIHandlerManager";
-import BindUIManager, { BindUIProperty } from "./BindUIManager";
+import BindUIManager, { BindUIPropertyDesc } from "./BindUIManager";
 
 interface BindTarget<T> {
     event: BindEvent<T>;
@@ -10,6 +10,9 @@ interface BindTarget<T> {
     propertiesName: PropertyKey[];
 }
 
+/**
+ * 绑定UI组件，是所有UI的基类。
+ */
 export default abstract class BindUIComponent extends Component {
     private bindList: BindTarget<any>[];
 
@@ -39,27 +42,30 @@ export default abstract class BindUIComponent extends Component {
         }
     }
 
+    /** 初始化绑定对象 */
     private initBindObject(): void {
-        let bindObject = BindUIManager.getBindUIObject(this.constructor);
+        let bindObject = BindUIManager.getBindUIObjectDesc(this.constructor);
         if (bindObject == null) return;
         this.bindList = [];
-        bindObject.foreachBind(this.initBinds.bind(this));
+        bindObject.foreachProperties(this.initPropertiesChanged, this);
     }
 
+    /** 初始化绑定对象的所有属性 */
     private initAllBindObjectProtopertes(): void {
         for (let bindTarget of this.bindList) {
             if (bindTarget.bindTarget == null) continue;
-            this.initBindObjectProperties(bindTarget);
+            this.initPropertyValues(bindTarget);
         }
     }
 
-    private initBindObjectProperties(bindTarget: BindTarget<any>): void {
+    /** 初始化所有绑定属性值，通知属性修改回调。 */
+    private initPropertyValues(bindTarget: BindTarget<any>): void {
         for (let propertyName of bindTarget.propertiesName) {
             bindTarget.event.onPropertyChanged(bindTarget.bindTarget, propertyName, bindTarget.bindTarget[propertyName]);
         }
     }
 
-    private initBinds<T>(propertyList: BindUIProperty[], classType: Function): void {
+    private initPropertiesChanged<T>(propertyList: BindUIPropertyDesc[], classType: Function): void {
         let bindTarget: BindTarget<T> = { event: new BindEvent<T>(), classType: classType, propertiesName: [] };
         for (let property of propertyList) {
             let uiPropertyValue = this[property.uiPropertyName];
@@ -81,7 +87,7 @@ export default abstract class BindUIComponent extends Component {
         target.bindTarget = instance;
         if (this.enabledInHierarchy) {
             target.event.bindObject(instance);
-            this.initBindObjectProperties(target);
+            this.initPropertyValues(target);
         }
     }
 

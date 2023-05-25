@@ -4,7 +4,10 @@ import { ILoadTask, LoadUrlType } from "../Loading/LoadingManager";
 import IViewController from "../vbm/Views/IViewController";
 import ViewUIManager from "../vbm/Views/ViewUIManager";
 
-export function RegisterSetupConfig(): Function {
+/**
+ * 注册系统启动配置项，用来替换框架默认的启动项。
+ */
+export function registerSetupConfig(): Function {
     return function (target: typeof SetupConfig) {
         if (!SetupConfig.isPrototypeOf(target))
             throw new Error(`Register setup config can only be used on a SetupConfig class.`);
@@ -29,11 +32,11 @@ export default class SetupConfig {
         console.log("SetupConfig Intialize");
     }
 
-    public async onLoadedCompleted() {
-    }
-
     public finalize() {
         console.log("SetupConfig Finalize");
+    }
+
+    public async onLoadedCompleted() {
     }
 
     public getAsyncPreloadAssets(): ILoadTask[] {

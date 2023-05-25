@@ -22,6 +22,9 @@ export function makeBindDataProxy<T>(instance: T): T & OnBindChangedEvent<T> {
     return newInstance.__proxy__;
 }
 
+/**
+ * 绑定对象事件，
+ */
 export default class BindEvent<T> {
     protected readonly propertiesMap = new Map<PropertyKey, Action<[T, any]>[]>();
 

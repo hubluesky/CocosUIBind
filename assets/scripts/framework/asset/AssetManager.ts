@@ -3,6 +3,9 @@ import { Action, Func } from "framework/utility/ActionEvent";
 
 // const poolKey = "__poolKey";
 
+/**
+ * 整个游戏的资源加载与缓存对象，通过封装，可以忽略bundle的存在，而使用bundleName:这样的方式来识别。
+ */
 export default class AssetManager {
     public static readonly RELEASE_EVENT = "ASSET_RELEASE_EVENT";
     protected static nativeAssetMap = new Map<string, any>();
@@ -38,17 +41,35 @@ export default class AssetManager {
         AssetManager.nodePoolMap.clear();
     }
 
+    /**
+     * 直接获得已经加载并缓存的资源
+     * @param assetPath 资源路径
+     * @returns 资源对象
+     */
     public static getAsset<T extends Asset>(assetPath: string): T {
         console.assert(!String.isEmptyOrNull(assetPath), "Asset path cannot be empty or null");
         return AssetManager.nativeAssetMap.get(assetPath);
     }
 
+    /**
+     * 设置要缓存的资源
+     * @param assetsPath 资源路径
+     * @param asset 资源对象
+     * @param replace 是否强制替换原有的资源（如果原来已经有这个资源路径的资源了）
+     */
     public static setAsset<T extends Asset>(assetsPath: string, asset: T, replace: boolean = false): void {
         if (!replace && AssetManager.nativeAssetMap.has(assetsPath)) warn("Set asset had exist!", assetsPath, asset);
         AssetManager.nativeAssetMap.set(assetsPath, asset);
     }
 
-    public static async loadCache<T extends Asset>(assetPath: string, type: Constructor<T>, loadFunc: Func<Promise<T>, [string, Constructor<T>]>): Promise<T> {
+    /**
+     * 加载资源，如果缓存中有这个资源，就返回缓存的资源，否则添加到加载资源队列加载。
+     * @param assetPath 资源路径
+     * @param type 资源类型
+     * @param loadFunc 资源加载函数
+     * @returns 异步资源对象
+     */
+    protected static async loadCache<T extends Asset>(assetPath: string, type: Constructor<T>, loadFunc: Func<Promise<T>, [string, Constructor<T>]>): Promise<T> {
         let asset = AssetManager.getAsset<T>(assetPath);
         if (asset != null) return asset;
         let promise = AssetManager.loadingAssetsMap.get(assetPath);
@@ -59,7 +80,7 @@ export default class AssetManager {
         return promise;
     }
 
-    public static async loadUrlAsset<T extends Asset>(urlPath: string | { uuid?: string, url?: string, type?: string }, type: Constructor<T>, translateRes?: Func<T, any>): Promise<T> {
+    protected static async loadUrlAsset<T extends Asset>(urlPath: string | { uuid?: string, url?: string, type?: string }, type: Constructor<T>, translateRes?: Func<T, any>): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             assetManager.loadAny(urlPath, (error, resource) => {
                 if (urlPath instanceof Object) urlPath = urlPath.url ?? urlPath.uuid;
@@ -68,6 +89,12 @@ export default class AssetManager {
         })
     }
 
+    /**
+     * 加载远程资源
+     * @param urlPath 远程资源url
+     * @param type 资源类型
+     * @returns 异步资源对象
+     */
     public static async loadUrl<T extends Asset>(urlPath: string, type: Constructor<T>): Promise<T> {
         return AssetManager.loadCache(urlPath, type, AssetManager.loadUrlAsset.bind(this));
     }
@@ -94,9 +121,9 @@ export default class AssetManager {
     //     });
     // }
 
-    public static async loadTextureRes(assetPath: string): Promise<SpriteFrame> {
-        return AssetManager.loadRes<SpriteFrame>(assetPath, SpriteFrame);
-    }
+    // public static async loadTextureRes(assetPath: string): Promise<SpriteFrame> {
+    //     return AssetManager.loadRes<SpriteFrame>(assetPath, SpriteFrame);
+    // }
 
     public static async loadSpriteFrameUrl(urlPath: string, sprite: { spriteFrame: SpriteFrame }): Promise<SpriteFrame> {
         let spriteFrame = await AssetManager.loadUrl(urlPath, SpriteFrame);
@@ -114,7 +141,7 @@ export default class AssetManager {
      * 获得资源bundle，路径示例：bundleName:prefabs/icons/hero
      * @param urlPath 
      */
-    public static async getBundle(urlPath: string): Promise<CCAssetManager.Bundle> {
+    protected static async getBundle(urlPath: string): Promise<CCAssetManager.Bundle> {
         const pathes = urlPath.split(":", 2);
         if (pathes.length == 1) return assetManager.resources;
         const bundle = assetManager.getBundle(pathes.first);
@@ -125,7 +152,7 @@ export default class AssetManager {
         }));
     }
 
-    public static async loadResAsset<T extends Asset>(urlPath: string, type: Constructor<T>, translateRes?: Func<T, [any]>): Promise<T> {
+    protected static async loadResAsset<T extends Asset>(urlPath: string, type: Constructor<T>, translateRes?: Func<T, [any]>): Promise<T> {
         const bundle = await AssetManager.getBundle(urlPath);
         console.assert(bundle != null, "Cannot find the bundle from path:", urlPath);
         return new Promise<T>((resolve, reject) => {
@@ -133,6 +160,12 @@ export default class AssetManager {
         });
     }
 
+    /**
+     * 加载本地资源
+     * @param assetPath 资源路径
+     * @param type 资源类型
+     * @returns 异步资源对象
+     */
     public static async loadRes<T extends Asset>(assetPath: string, type: Constructor<T>): Promise<T> {
         return AssetManager.loadCache(assetPath, type, AssetManager.loadResAsset.bind(this));
     }

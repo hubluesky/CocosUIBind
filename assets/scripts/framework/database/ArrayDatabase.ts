@@ -12,11 +12,11 @@ export default abstract class ArrayDatabase<T extends Prototype> extends Databas
     protected onLoad(): Promise<void> | void {
         let result = this.OnLoadArray();
         if (result instanceof Promise)
-            return this.WaitForPrototypeList(result);
+            return this.waitForPrototypeList(result);
         this._prototypeList = result;
     }
 
-    private async WaitForPrototypeList(listPromise: Promise<T[]>): Promise<void> {
+    private async waitForPrototypeList(listPromise: Promise<T[]>): Promise<void> {
         this._prototypeList = await listPromise;
     }
 
@@ -44,30 +44,30 @@ export default abstract class ArrayDatabase<T extends Prototype> extends Databas
     /** 加载二进制原型列表配置 */
     protected async OnLoadBinaryArray(buffer: ArrayBuffer): Promise<T[]> { return null; }
 
-    public Find(prototypeId: number): T;
-    public Find(predicate: Func<boolean, [T, number, ReadonlyArray<T>]>, thisArg?: any): T;
+    public find(prototypeId: number): T;
+    public find(predicate: Func<boolean, [T, number, ReadonlyArray<T>]>, thisArg?: any): T;
 
-    public Find(predicate: Func<boolean, [T, number, ReadonlyArray<T>]> | number, thisArg?: any): T {
+    public find(predicate: Func<boolean, [T, number, ReadonlyArray<T>]> | number, thisArg?: any): T {
         if (typeof predicate === `number`) return this.prototypeList.find((x) => x.prototypeId == predicate);
         return this.prototypeList.find(predicate, thisArg);
     }
 
-    public FindIndex(prototypeId: number): number {
+    public findIndex(prototypeId: number): number {
         return this.prototypeList.findIndex((x) => x.prototypeId == prototypeId);
     }
 
-    public Get(index: number): T {
+    public get(index: number): T {
         return this.prototypeList[index];
     }
 
-    public FirstPrtotype(): T { return this._prototypeList.first; }
-    public LastPrototype(): T { return this._prototypeList.last; }
+    public firstPrtotype(): T { return this._prototypeList.first; }
+    public lastPrototype(): T { return this._prototypeList.last; }
 
-    public RandomPrototype(): T {
+    public randomPrototype(): T {
         return Math.randomArrayValue(this.prototypeList);
     }
 
-    public RandomPrototypeId(): number {
-        return this.RandomPrototype().prototypeId;
+    public randomPrototypeId(): number {
+        return this.randomPrototype().prototypeId;
     }
 }
