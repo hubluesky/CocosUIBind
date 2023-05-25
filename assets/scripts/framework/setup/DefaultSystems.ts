@@ -1,17 +1,17 @@
 import DatabaseManager from "framework/database/DatabaseManager";
 import SaveManager from "../vbm/Storage/SaveManager";
 import SetupConfig from "./SetupConfig";
-import { RegisterSystemSetup } from "./SystemSetupManager";
+import { registerSystemSetup } from "./SystemSetupManager";
 
 export default class DefaultSystems {
 
-    @RegisterSystemSetup(300)
+    @registerSystemSetup(300)
     static async InitDatabaseManager(config: SetupConfig) {
-        return DatabaseManager.Initialized(config.configPath);
+        return DatabaseManager.initialize(config.configPath);
     }
 
-    @RegisterSystemSetup(400)
+    @registerSystemSetup(400)
     static async InitGameStorage(config: SetupConfig) {
-        return SaveManager.Initialize(SaveManager.StorageVersion, config.gameId);
+        return SaveManager.initialize(SaveManager.StorageVersion, config.gameId);
     }
 }

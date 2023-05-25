@@ -7,24 +7,24 @@ const { ccclass, property, menu } = _decorator;
 @menu("Framework/UI/AssetUIComponent")
 export default class AssetUIComponent extends Component {
     @property
-    public assetName: string = "";
+    public readonly assetName: string = "";
     @property({ type: Enum(ViewLayer) })
-    public layer: ViewLayer = ViewLayer.NormalLayer;
+    public readonly layer: ViewLayer = ViewLayer.NormalLayer;
     @property({ type: Enum(ViewShowRule) })
-    public showRule: ViewShowRule = ViewShowRule.None;
+    public readonly showRule: ViewShowRule = ViewShowRule.None;
     @property({ type: Enum(ViewHideRule) })
-    public hideRule: ViewHideRule = ViewHideRule.None;
+    public readonly hideRule: ViewHideRule = ViewHideRule.None;
 
     HideView(): void {
         let assetName = String.isEmptyOrNull(this.assetName) ? this.node.name : this.assetName;
-        ViewUIManager.HideView(assetName);
+        ViewUIManager.hideView(assetName);
     }
 
     ShowAssetView(assetName: string): void {
-        ViewUIManager.ShowView(assetName);
+        ViewUIManager.showView(assetName);
     }
 
     HideAssetView(assetName: string): void {
-        ViewUIManager.HideView(assetName);
+        ViewUIManager.hideView(assetName);
     }
 }

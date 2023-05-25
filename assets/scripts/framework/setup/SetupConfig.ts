@@ -25,35 +25,35 @@ export default class SetupConfig {
     public get gameId(): string { return "TestGameId"; }
     public get logDbName(): string { return "Testlog"; }
 
-    public Intialize() {
+    public initialize() {
         console.log("SetupConfig Intialize");
     }
 
-    public async OnLoadedCompleted() {
+    public async onLoadedCompleted() {
     }
 
-    public Finalize() {
+    public finalize() {
         console.log("SetupConfig Finalize");
     }
 
-    public GetAsyncPreloadAssets(): ILoadTask[] {
+    public getAsyncPreloadAssets(): ILoadTask[] {
         return [];
     }
 
-    public GetSyncPreloadAssets(): ILoadTask[] {
+    public getSyncPreloadAssets(): ILoadTask[] {
         return [];
     }
 
-    public static OnCompletedToCache(task: ILoadTask, asset: any): void {
-        AssetManager.Default.SetAsset(task.url, asset, true);
+    public static onCompletedToCache(task: ILoadTask, asset: any): void {
+        AssetManager.setAsset(task.url, asset, true);
     }
 
-    public CreateUITask<T extends IViewController>(type: { prototype: T } | string): ILoadTask {
-        let assetName = typeof type === 'string' ? type : ViewUIManager.GetViewConfig(type).assetName;
-        return { url: this.uiPath + assetName, urlType: LoadUrlType.LocalAsset, assetType: Prefab, OnSuccessCompleted: SetupConfig.OnCompletedToCache };
+    public createUITask<T extends IViewController>(type: { prototype: T } | string): ILoadTask {
+        let assetName = typeof type === 'string' ? type : ViewUIManager.getViewConfig(type).assetName;
+        return { url: this.uiPath + assetName, urlType: LoadUrlType.LocalAsset, assetType: Prefab, onSuccessCompleted: SetupConfig.onCompletedToCache };
     }
 
-    public CreateAssetTask(assetPath: string): ILoadTask {
-        return { url: assetPath, urlType: LoadUrlType.LocalAsset, assetType: Prefab, OnSuccessCompleted: SetupConfig.OnCompletedToCache };
+    public createAssetTask(assetPath: string): ILoadTask {
+        return { url: assetPath, urlType: LoadUrlType.LocalAsset, assetType: Prefab, onSuccessCompleted: SetupConfig.onCompletedToCache };
     }
 }

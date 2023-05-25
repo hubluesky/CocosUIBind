@@ -28,43 +28,43 @@ export default class FrameworkInit extends Component {
     onLoad(): void {
         FrameworkInit.instance = this;
         this._setupConfig = new SetupConfig.ConfigType();
-        this.Intialize(this.setupConfig);
+        this.initialize(this.setupConfig);
     }
 
     onDestroy() {
-        if (SaveManager.CheckStorage()) SaveManager.Save();
+        if (SaveManager.checkStorage()) SaveManager.save();
     }
 
-    protected async Intialize(config: SetupConfig) {
+    protected async initialize(config: SetupConfig) {
         game.frameRate = config.frameRate;
         SaveManager.StorageVersion = config.storageVersion;
 
-        LoadingUI.Default.Show();
-        AssetManager.Default.Initialize();
+        LoadingUI.Default.show();
+        AssetManager.initialize();
         NodePool.initilaize(this.nodePoolRoot);
-        ViewUIManager.Initialize(this.uiRoot, ViewControllerFactory.Create, config.uiPath);
+        ViewUIManager.Initialize(this.uiRoot, ViewControllerFactory.create, config.uiPath);
 
-        config.Intialize();
-        SystemSetupManager.Intialize();
+        config.initialize();
+        SystemSetupManager.initialize();
 
-        LoadingManager.Default.RunOrder(this.OnLoadCompleted.bind(this, config), this.OnProgressChange.bind(this),
+        LoadingManager.Default.runOrder(this.onLoadCompleted.bind(this, config), this.onProgressChange.bind(this),
             ...SystemSetupManager.getSystemSetupTasks(config),
-            ...config.GetSyncPreloadAssets(),
+            ...config.getSyncPreloadAssets(),
         );
-        LoadingManager.Default.RunBackground(...config.GetAsyncPreloadAssets());
+        LoadingManager.Default.runBackground(...config.getAsyncPreloadAssets());
     }
 
-    private OnProgressChange(progress: number): void {
-        LoadingUI.Default.OnProgressChanged(progress, this.loadingPromopt);
+    private onProgressChange(progress: number): void {
+        LoadingUI.Default.onProgressChanged(progress, this.loadingPromopt);
     }
 
-    private async OnLoadCompleted(config: SetupConfig) {
-        ModelManager.InitModels();
+    private async onLoadCompleted(config: SetupConfig) {
+        ModelManager.initialize();
         // PlatformService.OnApplicationVisible.Add((visible, res) => {
         //     if (!visible) SaveManager.Save();
         // });
-        await config.OnLoadedCompleted();
-        await LoadingUI.Default.Hide(1);
-        config.Finalize();
+        await config.onLoadedCompleted();
+        await LoadingUI.Default.hide(1);
+        config.finalize();
     }
 }

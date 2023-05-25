@@ -3,9 +3,9 @@ import SerializeManager from "./SerializeManager";
 /** 由于Typescript的bug，要序列化的对象必须继承一个对象才能被正常创建，好像Typescritp 3.9版本就解决此问题 */
 export default abstract class Serializable {
     /** 在被序列化成数据之前回调 */
-    public OnSerialize?(): void;
+    public onSerialize?(): void;
     /** 在数据被序列化成对象之后回调 */
-    public OnDeserialize?(): void;
+    public onDeserialize?(): void;
 }
 
 /**
@@ -13,11 +13,11 @@ export default abstract class Serializable {
  * @param uniqueName 唯一名字（只在全局存档的时候需要）
  * @param parentType 父类型（可序列化的对象）
  */
-export function SerializeClass(uniqueName?: string, parentType?: Function): Function {
+export function serializeClass(uniqueName?: string, parentType?: Function): Function {
     return function (target: any) {
         const type = target.prototype.constructor;
         if (!Serializable.isPrototypeOf(type)) throw new Error(`Serializable class must a Serializable. ${target}`);
-        SerializeManager.RegisterSerializeType(uniqueName, target, parentType);
+        SerializeManager.registerSerializeType(uniqueName, target, parentType);
     }
 }
 
@@ -26,9 +26,9 @@ export function SerializeClass(uniqueName?: string, parentType?: Function): Func
  * @param serializeName 序列化名字，即属性别名
  * @param type 属性类型，实例化可以不用填。
  */
-export function SerializeField(serializeName?: string, fieldType?: Function) {
+export function serializeField(serializeName?: string, fieldType?: Function) {
     return function (target: Object, propertyName: string) {
         if (!Serializable.isPrototypeOf(target.constructor)) throw new Error(`Serializable field of class must a Serializable. ${target.constructor.name}`);
-        SerializeManager.RegisterField(target, propertyName, serializeName, fieldType);
+        SerializeManager.registerField(target, propertyName, serializeName, fieldType);
     }
 }

@@ -9,7 +9,7 @@ export default abstract class ArrayDatabase<T extends Prototype> extends Databas
     public get length() { return this.prototypeList.length; }
     public get prototypeLength() { return this.prototypeList.length; }
 
-    protected OnLoad(): Promise<void> | void {
+    protected onLoad(): Promise<void> | void {
         let result = this.OnLoadArray();
         if (result instanceof Promise)
             return this.WaitForPrototypeList(result);
@@ -20,15 +20,15 @@ export default abstract class ArrayDatabase<T extends Prototype> extends Databas
         this._prototypeList = await listPromise;
     }
 
-    protected async OnLoadJson(json: Object): Promise<void> {
+    protected async onLoadJson(json: Object): Promise<void> {
         this._prototypeList = await this.OnLoadJsonArray(json);
     }
 
-    protected async OnLoadBinary(buffer: ArrayBuffer): Promise<void> {
+    protected async onLoadBinary(buffer: ArrayBuffer): Promise<void> {
         this._prototypeList = await this.OnLoadBinaryArray(buffer);
     }
 
-    protected async OnLoadZip(buffer: ArrayBuffer): Promise<void> {
+    protected async onLoadZip(buffer: ArrayBuffer): Promise<void> {
         let utf8Buffer = await new Promise<Uint8Array>((resolve, reject) => {
             // ZipCompress.unzip(new Uint8Array(buffer), (array: Uint8Array, error: string) => {
             //     error != null ? reject(error) : resolve(array)

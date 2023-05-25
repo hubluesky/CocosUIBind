@@ -14,15 +14,15 @@ export default class BindArrayComponent extends Component implements BindArrayHa
     private bindArray: any[] = null;
 
     onLoad(): void {
-        this.bindEvent.AddArrayChanged((dataList, type, index: string | number, value, oldValue) => {
+        this.bindEvent.addArrayChanged((dataList, type, index: string | number, value, oldValue) => {
             switch (type) {
                 case BindArrayEventType.Add:
                 case BindArrayEventType.Update:
                     let i = typeof index === `string` ? parseInt(index) : index;
-                    this.UpdateDataItem(i, value);
+                    this.updateDataItem(i, value);
                     break;
                 case BindArrayEventType.Resize:
-                    this.ResizeDataList();
+                    this.resizeDataList();
                     break;
             }
         });
@@ -30,39 +30,39 @@ export default class BindArrayComponent extends Component implements BindArrayHa
 
     onEnable(): void {
         if (this.bindArray != null) {
-            this.bindEvent.BindObject(this.bindArray);
+            this.bindEvent.bindObject(this.bindArray);
             this.node.enabledAllChild(false, this.indexOffset);
-            this.UpdateDataList();
+            this.updateDataList();
         }
     }
 
     onDisable(): void {
         if (this.bindArray != null)
-            this.bindEvent.UnbindObject(this.bindArray);
+            this.bindEvent.unbindObject(this.bindArray);
     }
 
-    private UnBindTarget(): void {
+    private unBindTarget(): void {
         if (this.bindArray != null) {
-            this.bindEvent.UnbindObject(this.bindArray);
+            this.bindEvent.unbindObject(this.bindArray);
             this.bindArray = null;
         }
     }
 
-    public SetBindArray(array: any[]): void {
-        this.OnPropertyChanged(array);
+    public setBindArray(array: any[]): void {
+        this.onPropertyChanged(array);
     }
 
-    public OnPropertyChanged(array: any[]): void {
+    public onPropertyChanged(array: any[]): void {
         this.node.enabledAllChild(false, this.indexOffset);
-        this.UnBindTarget();
+        this.unBindTarget();
         if (array == null) return;
-        this.bindEvent.BindObject(array);
+        this.bindEvent.bindObject(array);
         this.bindArray = array;
         if (this.enabledInHierarchy)
-            this.UpdateDataList();
+            this.updateDataList();
     }
 
-    private ResizeDataList(): void {
+    private resizeDataList(): void {
         if (this.bindArray.length >= this.node.children.length) return;
         let count = this.node.children.length + this.indexOffset - this.bindArray.length;
         for (let i = 0; i < count; i++) {
@@ -71,18 +71,18 @@ export default class BindArrayComponent extends Component implements BindArrayHa
         }
     }
 
-    private UpdateDataList(): void {
+    private updateDataList(): void {
         for (let i = 0; i < this.bindArray.length; i++) {
-            this.UpdateDataItem(i, this.bindArray[i]);
+            this.updateDataItem(i, this.bindArray[i]);
         }
     }
 
-    private UpdateDataItem(index: number, dataItem: any): void {
+    private updateDataItem(index: number, dataItem: any): void {
         let itemUINode = this.node.getOrCreateChild(index + this.indexOffset, this.indexOffset);
         let bindArrayItem = itemUINode.getComponent(BindArrayItemComponent);
         if (bindArrayItem != null) {
-            bindArrayItem.SetArrayItem(dataItem, index);
-            bindArrayItem.RemoveFromArray = () => this.bindArray.removeAt(index);
+            bindArrayItem.setArrayItem(dataItem, index);
+            bindArrayItem.removeFromArray = () => this.bindArray.removeAt(index);
         }
         bindArrayItem.node.active = true;
     }

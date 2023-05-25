@@ -35,24 +35,24 @@ export interface ILoadTask {
     /** 资源类型 */
     assetType?: typeof Asset;
     /** 自定义资源加载 */
-    LoadCustomAsset?: (onCompleted: (task: ILoadResult) => void) => void;
+    loadCustomAsset?: (onCompleted: (task: ILoadResult) => void) => void;
     /** 资源加载成功回调，失败不会回调 */
-    OnSuccessCompleted?: (task: ILoadTask, asset: any, urls?: string[]) => void;
+    onSuccessCompleted?: (task: ILoadTask, asset: any, urls?: string[]) => void;
 }
 
 export class CustomLoadTask implements ILoadTask {
     public readonly url: string = null;
     public readonly urlType: LoadUrlType = LoadUrlType.Custom;
-    public readonly LoadCustomAsset: (onCompleted: (task: ILoadResult) => void) => void;
-    public readonly OnSuccessCompleted: (task: ILoadTask, asset: any, urls?: string[]) => void;
+    public readonly loadCustomAsset: (onCompleted: (task: ILoadResult) => void) => void;
+    public readonly onSuccessCompleted: (task: ILoadTask, asset: any, urls?: string[]) => void;
 
     public constructor(customFunction: () => Promise<ILoadResult | void> | void, onSuccessCompleted?: (task: ILoadTask, asset: any, urls?: string[]) => void) {
-        this.LoadCustomAsset = async (onCompleted) => {
+        this.loadCustomAsset = async (onCompleted) => {
             let result = customFunction();
             let loadResult: ILoadResult = (result instanceof Promise ? await result : null) || { error: null };
             onCompleted(loadResult);
         };
-        this.OnSuccessCompleted = onSuccessCompleted;
+        this.onSuccessCompleted = onSuccessCompleted;
     }
 }
 
@@ -84,20 +84,20 @@ export default class LoadingManager {
      * @param progressFunc 进度函数回调
      * @param taskList 任务队列
      */
-    public Run(completeFunc: (wasError: boolean) => void, progressFunc: (progress: number) => void, ...taskList: ILoadTask[]): void {
+    public run(completeFunc: (wasError: boolean) => void, progressFunc: (progress: number) => void, ...taskList: ILoadTask[]): void {
         this.onCompleteFunc = completeFunc;
         this.onProgressChanged = progressFunc;
-        this.RunBackground(...taskList);
+        this.runBackground(...taskList);
     }
 
     /**
      * 开始后台加载，如果后台未加载完成就开始新的加载，则新的加载会和后台加载一起完成。
      * @param taskList 任务队列
      */
-    public RunBackground(...taskList: ILoadTask[]): void {
+    public runBackground(...taskList: ILoadTask[]): void {
         this.taskCount += taskList.length;
         for (let task of taskList) {
-            this.LoadingTask(task, this.OnLoadingCompleted.bind(this));
+            this.loadingTask(task, this.onLoadingCompleted.bind(this));
         }
     }
 
@@ -107,33 +107,33 @@ export default class LoadingManager {
      * @param progressFunc 进度函数回调
      * @param taskList 任务队列
      */
-    public RunOrder(completeFunc: (wasError: boolean) => void, progressFunc: (progress: number) => void, ...taskList: ILoadTask[]): void {
+    public runOrder(completeFunc: (wasError: boolean) => void, progressFunc: (progress: number) => void, ...taskList: ILoadTask[]): void {
         this.onProgressChanged = progressFunc;
         this.onCompleteFunc = completeFunc;
-        this.RunOrderBackground(...taskList);
+        this.runOrderBackground(...taskList);
     }
 
     /**
      * 开始后台顺序加载，如果后台未加载完成就开始新的加载，则新的加载会和后台加载一起完成。
      * @param taskList 任务队列
      */
-    public RunOrderBackground(...taskList: ILoadTask[]): void {
+    public runOrderBackground(...taskList: ILoadTask[]): void {
         this.taskCount += taskList.length;
-        this.LoadingTaskOrder(taskList);
+        this.loadingTaskOrder(taskList);
     }
 
-    private async LoadingTaskOrder(taskList: ILoadTask[]) {
+    private async loadingTaskOrder(taskList: ILoadTask[]) {
         for (let task of taskList) {
             await new Promise<void>((resolve) => {
-                this.LoadingTask(task, (task: ILoadTask, error: Error | string, asset: any) => {
-                    this.OnLoadingCompleted(task, error, asset);
+                this.loadingTask(task, (task: ILoadTask, error: Error | string, asset: any) => {
+                    this.onLoadingCompleted(task, error, asset);
                     resolve();
                 });
             });
         }
     }
 
-    private LoadingTask(task: ILoadTask, onCompleted: (task: ILoadTask, error: Error | string, asset?: any) => void): void {
+    private loadingTask(task: ILoadTask, onCompleted: (task: ILoadTask, error: Error | string, asset?: any) => void): void {
         switch (task.urlType) {
             case LoadUrlType.LocalAsset:
                 resources.load(task.url, task.assetType, null, (error, asset) => onCompleted(task, error, asset));
@@ -157,30 +157,30 @@ export default class LoadingManager {
                 let progressScale: number = 1 / this.taskCount / 100;
                 director.preloadScene(task.url, (progressCount, totalCount) => {
                     let progress = progressCount / totalCount;
-                    this.CallProgressChanged(this.completedCount / this.taskCount + progress * progressScale);
+                    this.callProgressChanged(this.completedCount / this.taskCount + progress * progressScale);
                 }, (error, asset) => {
                     onCompleted(task, error, asset);
                 });
                 break;
             }
             case LoadUrlType.Custom:
-                task.LoadCustomAsset((result) => onCompleted(task, result.error, result.asset));
+                task.loadCustomAsset((result) => onCompleted(task, result.error, result.asset));
                 break;
         }
     }
 
-    private CallProgressChanged(progress: number): void {
+    private callProgressChanged(progress: number): void {
         if (this.onProgressChanged) this.onProgressChanged(progress);
     }
 
-    private OnLoadingCompleted(task: ILoadTask, error: Error | string, asset: any, urls?: string[]): void {
+    private onLoadingCompleted(task: ILoadTask, error: Error | string, asset: any, urls?: string[]): void {
         this.completedCount++;
-        this.CallProgressChanged(this.completedCount / this.taskCount);
+        this.callProgressChanged(this.completedCount / this.taskCount);
         if (error) {
             this.isError = true;
             console.warn("Load asset failed", task, error);
-        } else if (task.OnSuccessCompleted) {
-            task.OnSuccessCompleted(task, asset, urls);
+        } else if (task.onSuccessCompleted) {
+            task.onSuccessCompleted(task, asset, urls);
             if (task.autoRelease) {
                 switch (task.urlType) {
                     case LoadUrlType.LocalAsset:

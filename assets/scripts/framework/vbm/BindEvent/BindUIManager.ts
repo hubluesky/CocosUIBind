@@ -9,19 +9,19 @@ type Type = Function;
  * @param propertyName 绑定数据对象属性
  * @param onPropertyChanged 自处理属性回调处理
  */
-export function BindUIField<T extends AnyConstructor>(classType: T, propertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>) {
+export function bindUIField<T extends AnyConstructor>(classType: T, propertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>) {
     return function (target: Object, uiPropertyName: PropertyKey) {
         if (!BindUIComponent.isPrototypeOf(target.constructor)) throw new Error(`Bind field in class must a UIComponent. ${target.constructor}`);
         if (classType == null) throw new Error(`Bind ${propertyName?.toString()} field faile, class type is null, Does the classType object and the target object refer to each other?`);
-        BindUIManager.AddField<T>(target.constructor, uiPropertyName, false, classType.prototype.constructor, propertyName, onPropertyChanged);
+        BindUIManager.addField<T>(target.constructor, uiPropertyName, false, classType.prototype.constructor, propertyName, onPropertyChanged);
     }
 }
 
-export function BindUIArrayField<T extends AnyConstructor>(classType: T, propertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>) {
+export function bindUIArrayField<T extends AnyConstructor>(classType: T, propertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>) {
     return function (target: Object, uiPropertyName: PropertyKey) {
         if (!BindUIComponent.isPrototypeOf(target.constructor)) throw new Error(`Bind field in class must a UIComponent. ${target.constructor}`);
         if (classType == null) throw new Error(`Bind ${propertyName?.toString()} field faile, class type is null, Does the classType object and the target object refer to each other?`);
-        BindUIManager.AddField<T>(target.constructor, uiPropertyName, true, classType.prototype.constructor, propertyName, onPropertyChanged);
+        BindUIManager.addField<T>(target.constructor, uiPropertyName, true, classType.prototype.constructor, propertyName, onPropertyChanged);
     }
 }
 
@@ -35,7 +35,7 @@ export interface BindUIProperty {
 export class BindUIObject {
     private readonly bindEventMap = new Map<Type, BindUIProperty[]>();
 
-    public GetDataBindList<T extends AnyConstructor>(classType: T): BindUIProperty[] {
+    public getDataBindList<T extends AnyConstructor>(classType: T): BindUIProperty[] {
         let propertyList = this.bindEventMap.get(classType);
         if (propertyList == null) {
             propertyList = [];
@@ -44,7 +44,7 @@ export class BindUIObject {
         return propertyList;
     }
 
-    public ForeachBind(callbackfn: (value: BindUIProperty[], key: Type, map: Map<Type, BindUIProperty[]>) => void, thisArg?: any): void {
+    public foreachBind(callbackfn: (value: BindUIProperty[], key: Type, map: Map<Type, BindUIProperty[]>) => void, thisArg?: any): void {
         this.bindEventMap.forEach(callbackfn, thisArg);
     }
 }
@@ -52,18 +52,18 @@ export class BindUIObject {
 export default class BindUIManager {
     private static bindMap = new Map<Type, BindUIObject>();
 
-    public static AddField<T extends AnyConstructor>(uiClassType: Type, uiPropertyName: PropertyKey, isArray: boolean, dataType: T, dataPropertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>): void {
+    public static addField<T extends AnyConstructor>(uiClassType: Type, uiPropertyName: PropertyKey, isArray: boolean, dataType: T, dataPropertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>): void {
         let bindUIObject = BindUIManager.bindMap.get(uiClassType);
         if (bindUIObject == null) {
             bindUIObject = new BindUIObject();
             BindUIManager.bindMap.set(uiClassType, bindUIObject);
         }
 
-        let bindEvent = bindUIObject.GetDataBindList(dataType);
+        let bindEvent = bindUIObject.getDataBindList(dataType);
         bindEvent.push({ uiPropertyName, isArray, dataPropertyName, onPropertyChanged });
     }
 
-    public static GetBindUIObject(classType: Type): BindUIObject {
+    public static getBindUIObject(classType: Type): BindUIObject {
         return BindUIManager.bindMap.get(classType);
     }
 }

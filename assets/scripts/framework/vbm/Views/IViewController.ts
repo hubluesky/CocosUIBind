@@ -2,7 +2,7 @@ import { Node } from "cc";
 import ActionEvent from "framework/utility/ActionEvent";
 import ViewConfig from "./ViewConfig";
 
-export type OnSetParamsName = "OnSetParams";
+export type OnSetParamsName = "onSetParams";
 export default interface IViewController {
   readonly onSetParamsEvent: ActionEvent<[boolean, IViewController]>;
   readonly onSetParamsOnceEvent: ActionEvent<[boolean, IViewController]>;
@@ -17,29 +17,29 @@ export default interface IViewController {
   /** 当前View资源是否显示中 */
   readonly isShowing: boolean;
   /** 获得View注册的类型 */
-  GetViewType(): Function | string;
+  getViewType(): Function | string;
   /** View设置配置函数 */
-  SetViewConfig(viewConfig: ViewConfig): void;
+  setViewConfig(viewConfig: ViewConfig): void;
   /** 销毁View的UI资源 */
-  DestroyAsset(): void;
+  destroyAsset(): void;
   /** 创建View的UI资源回调 */
-  CreateAsset(): Promise<void>;
+  createAsset(): Promise<void>;
   /** 显示View，参数会被调用传递给OnSetParams函数 */
-  ShowView<T extends IViewController>(...params: Parameters<T[OnSetParamsName]>): Promise<ReturnType<T[OnSetParamsName]>>;
+  showView<T extends IViewController>(...params: Parameters<T[OnSetParamsName]>): Promise<ReturnType<T[OnSetParamsName]>>;
   /** 隐藏View */
-  HideView(): Promise<void>;
+  hideView(): Promise<void>;
   /** 内部调用显示，外部请勿使用。 */
-  InternalShow(): Promise<void>;
+  __internalShow(): Promise<void>;
   /** 内部调用隐藏，外部请勿使用。 */
-  InternalHide(): Promise<void>;
+  __internalHide(): Promise<void>;
   /** View的UI资源创建回调，只会回调一次。支持async */
-  OnCreated(): Promise<void> | void;
+  onCreated(): Promise<void> | void;
   /** View在被外部调用Show的时候回调，传入的参数在在此回调。支持async */
-  OnSetParams(...params: any[]): any;
+  onSetParams(...params: any[]): any;
   /** View在显示的时候会回调，包含外部调用显示和被UI管理器从后台调用显示都会回调 */
-  OnShowView(): void;
+  onShowView(): void;
   /** View在隐藏的时候，回调，包含外部调用隐藏和被UI管理器从后台调用隐藏都会回调 */
-  OnHideView(): void;
+  onHideView(): void;
   /** View对象销毁回调 */
-  OnDestroyed(): void;
+  onDestroyed(): void;
 }

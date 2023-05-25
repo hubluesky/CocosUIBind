@@ -5,12 +5,12 @@ export default class ViewComponent extends BindUIComponent {
     protected _viewUI: IViewController;
     public get viewUI(): IViewController { return this._viewUI; }
 
-    public InitViewUI(viewUI: IViewController): IViewController {
+    public initViewUI(viewUI: IViewController): IViewController {
         this._viewUI = viewUI;
         return viewUI;
     }
 
-    public HideView(): void {
-        this.viewUI.HideView();
+    public hideView(): void {
+        this.viewUI.hideView();
     }
 }

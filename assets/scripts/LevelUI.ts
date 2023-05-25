@@ -1,8 +1,8 @@
 import { _decorator, Label, ProgressBar } from 'cc';
 import BindArrayComponent from 'framework/vbm/BindEvent/BindArrayComponent';
-import { BindUIArrayField, BindUIField } from 'framework/vbm/BindEvent/BindUIManager';
+import { bindUIArrayField, bindUIField } from 'framework/vbm/BindEvent/BindUIManager';
 import { ViewLayer } from 'framework/vbm/Views/ViewConfig';
-import { RegisterView } from './framework/vbm/Views/RegisterView';
+import { registerView } from './framework/vbm/Views/RegisterView';
 import ViewUIComponent from './framework/vbm/Views/ViewUIComponent';
 import LevelData from './LevelData';
 import ModelManager from 'framework/vbm/Models/ModelManager';
@@ -10,10 +10,10 @@ import { ResourceType } from './ResourceType';
 const { ccclass, property } = _decorator;
 
 @ccclass('LevelUI')
-@RegisterView("LevelUI", ViewLayer.NormalLayer)
+@registerView("LevelUI", ViewLayer.NormalLayer)
 export class LevelUI extends ViewUIComponent {
     @property(ProgressBar)
-    @BindUIArrayField(LevelData, "resourceCapacitys", (levelUI: LevelUI, p2, levelData, p4) => levelUI.onWoodChanged(levelData))
+    @bindUIArrayField(LevelData, "resourceCapacitys", (levelUI: LevelUI, p2, levelData, p4) => levelUI.onWoodChanged(levelData))
     private readonly woodProgress: ProgressBar;
     @property(Label)
     private readonly woodLabel: Label;
@@ -24,9 +24,9 @@ export class LevelUI extends ViewUIComponent {
     @property(BindArrayComponent)
     private buildingList: BindArrayComponent;
 
-    public OnCreated(): void {
-        let levelData = ModelManager.GetModel(LevelData);
-        this.AddBindObject(levelData);
+    public onCreated(): void {
+        let levelData = ModelManager.getModel(LevelData);
+        this.addBindObject(levelData);
 
         this.scheduleOnce(()=> {
             levelData.modifyResourceValue(ResourceType.Wood, 34);

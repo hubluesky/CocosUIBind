@@ -12,7 +12,7 @@ interface OnBindArrayChangedEvent<T> {
     __proxy__: any;
 }
 
-export function MakeBindArrayProxy<T>(instance: T[]): T[] & OnBindArrayChangedEvent<T> {
+export function makeBindArrayProxy<T>(instance: T[]): T[] & OnBindArrayChangedEvent<T> {
     if (Object.hasProperty<OnBindArrayChangedEvent<T>>(instance, "__proxy__") && instance.__proxy__ != null) return instance.__proxy__;
     type ProxyType = T[] & OnBindArrayChangedEvent<T>;
     let newInstance: ProxyType = instance as ProxyType;
@@ -45,34 +45,34 @@ export function MakeBindArrayProxy<T>(instance: T[]): T[] & OnBindArrayChangedEv
 export default class BindArrayEvent<T> {
     protected readonly eventList: Action<[T[], BindArrayEventType, PropertyKey, T, T]>[] = [];
 
-    public AddArrayChanged(onPropertyChanged: Action<[T[], BindArrayEventType, PropertyKey, T, T]>): boolean {
+    public addArrayChanged(onPropertyChanged: Action<[T[], BindArrayEventType, PropertyKey, T, T]>): boolean {
         if (this.eventList.contains(onPropertyChanged))
             return false;
         return !!this.eventList.push(onPropertyChanged);
     }
 
-    public RemoveArrayChanged(onPropertyChanged: Action<[T[], BindArrayEventType, PropertyKey, T, T]>): boolean {
+    public removeArrayChanged(onPropertyChanged: Action<[T[], BindArrayEventType, PropertyKey, T, T]>): boolean {
         return this.eventList.remove(onPropertyChanged) != null;
     }
 
-    public BindObject(instance: T[]): T[] {
-        let newInstance = MakeBindArrayProxy(instance);
-        newInstance.__itemsChanged__.addEvent(this.OnPropertyChanged, this);
+    public bindObject(instance: T[]): T[] {
+        let newInstance = makeBindArrayProxy(instance);
+        newInstance.__itemsChanged__.addEvent(this.onPropertyChanged, this);
         return newInstance;
     }
 
-    public UnbindObject(instance: T[]): void {
+    public unbindObject(instance: T[]): void {
         if (instance && Object.hasProperty<OnBindArrayChangedEvent<T>>(instance, "__itemsChanged__")) {
-            instance.__itemsChanged__.removeEvent(this.OnPropertyChanged, this);
+            instance.__itemsChanged__.removeEvent(this.onPropertyChanged, this);
         }
     }
 
-    protected OnPropertyChanged(array: T[], eventType: BindArrayEventType, key: PropertyKey, value: T, oldValue: T): void {
+    protected onPropertyChanged(array: T[], eventType: BindArrayEventType, key: PropertyKey, value: T, oldValue: T): void {
         for (let action of this.eventList)
             action(array, eventType, key, value, oldValue);
     }
 
-    public static IsBindObject<T>(instance: T): boolean {
+    public static isBindObject<T>(instance: T): boolean {
         return Object.hasProperty<OnBindArrayChangedEvent<T>>(instance, "__proxy__");
     }
 }

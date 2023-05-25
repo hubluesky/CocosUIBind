@@ -4,7 +4,7 @@ import SetupConfig, { RegisterSetupConfig } from "framework/setup/SetupConfig";
 
 @RegisterSetupConfig()
 export default class GameSetupConfig extends SetupConfig {
-    public async OnLoadedCompleted() {
+    public async onLoadedCompleted() {
         const levelManager = director.getScene().getChildByName("LevelManager");
         levelManager.active = true;
     }

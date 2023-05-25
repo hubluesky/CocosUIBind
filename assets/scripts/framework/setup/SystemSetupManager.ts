@@ -5,9 +5,9 @@ import SetupConfig from "./SetupConfig";
 /**
  *  It must a static function
  */
-export function RegisterSystemSetup(priority: number) {
+export function registerSystemSetup(priority: number) {
     return function (target: Function, propertyKey: string, descriptor: PropertyDescriptor) {
-        SystemSetupManager.RegisterSetup(priority, propertyKey, target[propertyKey]);
+        SystemSetupManager.registerSetup(priority, propertyKey, target[propertyKey]);
     };
 }
 
@@ -20,11 +20,11 @@ export interface SetupSystem {
 export default class SystemSetupManager {
     public static readonly setupSystemFunctions: SetupSystem[] = [];
 
-    public static RegisterSetup(priority: number, name: string, initFunction: Action<[SetupConfig]>): void {
+    public static registerSetup(priority: number, name: string, initFunction: Action<[SetupConfig]>): void {
         SystemSetupManager.setupSystemFunctions.push({ priority, name, initFunction });
     }
 
-    public static Intialize(): void {
+    public static initialize(): void {
         SystemSetupManager.setupSystemFunctions.sort((a, b) => a.priority - b.priority);
     }
 

@@ -6,57 +6,57 @@ import SerializeManager from "../Storage/SerializeManager";
  */
 export interface IModelInitalizer {
     /** 第一次创建的时间回调，其它时候是反序列化的时候回调 */
-    OnConstructor?();
+    onConstructor?();
     /** 加载存档后，全局序列化的对象的此函数会被回调，不能在此函数里调用其它Model对象 */
-    Initialize?(): void;
+    initialize?(): void;
 }
 
 export default class ModelManager {
     private static modelMap = new Map<Function, any>();
 
-    public static GetModel<T>(type: { prototype: T, new() }): T {
+    public static initialize(): void {
+        SerializeManager.foreachSerializeType((uniqueName, classType: any) => {
+            if (String.isEmptyOrNull(uniqueName)) return;
+            let model: IModelInitalizer = ModelManager.getModel(classType);
+            if (model.initialize)
+                model.initialize();
+        });
+    }
+
+    public static getModel<T>(type: { prototype: T, new(); }): T {
         let model = ModelManager.modelMap.get(type);
         if (model == null) {
-            if (SerializeManager.CheckSerializeType(type)) {
-                let key = SerializeManager.GetUniqueName(type);
-                let jsonModel = SaveManager.GetJsonObject(key);
-                model = jsonModel == null ? ModelManager.CreateModel(type) : ModelManager.Create(type, jsonModel);
-                SaveManager.SetSaveObject(key, model);
+            if (SerializeManager.checkSerializeType(type)) {
+                let key = SerializeManager.getUniqueName(type);
+                let jsonModel = SaveManager.getJsonObject(key);
+                model = jsonModel == null ? ModelManager.createModel(type) : ModelManager.create(type, jsonModel);
+                SaveManager.setSaveObject(key, model);
             } else {
-                model = ModelManager.CreateModel(type);
+                model = ModelManager.createModel(type);
             }
             ModelManager.modelMap.set(type, model);
         }
         return model;
     }
 
-    public static InitModels(): void {
-        SerializeManager.ForeachSerializeType((uniqueName, classType: any) => {
-            if (String.isEmptyOrNull(uniqueName)) return;
-            let model: IModelInitalizer = ModelManager.GetModel(classType);
-            if (model.Initialize)
-                model.Initialize();
-        });
-    }
-
-    public static ReplaceModel<T>(type: { prototype: T, new() }, instance: T): void {
+    public static replaceModel<T>(type: { prototype: T, new(); }, instance: T): void {
         this.modelMap.set(type, instance);
     }
 
-    public static CreateModel<T>(type: { new(): T }): T {
+    public static createModel<T>(type: { new(): T; }): T {
         let model = new type();
         let init: IModelInitalizer = model;
-        if (init.OnConstructor)
-            init.OnConstructor();
+        if (init.onConstructor)
+            init.onConstructor();
         return model;
     }
 
-    private static Create<T>(type: { prototype: T, new() }, jsonModel: Object): T {
+    private static create<T>(type: { prototype: T, new(); }, jsonModel: Object): T {
         let instance = new type();
-        return SerializeManager.Deserialize(jsonModel, instance);
+        return SerializeManager.deserialize(jsonModel, instance);
     }
 
-    public static CreateInstance<T>(prototype: Object): T {
+    public static createInstance<T>(prototype: Object): T {
         let newInstance: T = Object.create(prototype);
         return newInstance.constructor.apply(newInstance);
     }

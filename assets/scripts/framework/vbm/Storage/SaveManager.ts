@@ -15,46 +15,46 @@ export default class SaveManager {
     public static get isLoadFormSave() { return SaveManager._isLoadFormSave; }
     public static get isFirstLoaded() { return !SaveManager._isLoadFormSave; }
 
-    public static GetJsonObject(key: string): JsonObject {
+    public static getJsonObject(key: string): JsonObject {
         return SaveManager.saveJsonObject[key];
     }
 
-    public static SetSaveObject(key: string, obj: Serializable): void {
+    public static setSaveObject(key: string, obj: Serializable): void {
         SaveManager.saveObject.set(key, obj);
     }
 
-    public static SerializeSaveObjects(): JsonObject {
+    public static serializeSaveObjects(): JsonObject {
         for (let entity of Array.from(SaveManager.saveObject)) {
             let key = entity[0];
             let value = entity[1];
-            SaveManager.saveJsonObject[key] = SerializeManager.Serialize({}, value);
+            SaveManager.saveJsonObject[key] = SerializeManager.serialize({}, value);
         }
         return SaveManager.saveJsonObject;
     }
 
-    public static DeserializeSaveObjects(jsonObject: {}): void {
+    public static deserializeSaveObjects(jsonObject: {}): void {
         let saveObjectMap = SaveManager.saveObject;
         for (let key of Object.keys(jsonObject)) {
             let serializeObject = saveObjectMap.get(key);
             if (serializeObject != null)
-                SerializeManager.Deserialize(jsonObject[key], serializeObject);
+                SerializeManager.deserialize(jsonObject[key], serializeObject);
         }
     }
 
-    public static async Initialize(version: number, gameId: string): Promise<void> {
+    public static async initialize(version: number, gameId: string): Promise<void> {
         console.time("SaveManager intialize time");
-        await this.Load(version, gameId);
+        await this.load(version, gameId);
         let oldVersion = SaveManager.saveJsonObject.version || 0;
         if (oldVersion < version) {
             console.warn(`The storage version ${SaveManager.saveJsonObject.version} < current version ${version}, And clear old storage!`);
-            SaveManager.Clear(version);
+            SaveManager.clear(version);
             SaveManager._isLoadFormSave = false;
         }
-        game.on(Game.EVENT_HIDE, SaveManager.Save);
+        game.on(Game.EVENT_HIDE, SaveManager.save);
         console.timeEnd("SaveManager intialize time");
     }
 
-    public static async Load(version: number, gameId: string): Promise<void> {
+    public static async load(version: number, gameId: string): Promise<void> {
         return new Promise((resolve, reject) => {
             console.time("GameStorage Download");
             const jsonText = sys.localStorage.getItem(gameId);
@@ -71,7 +71,7 @@ export default class SaveManager {
             //     SaveManager._isLoadFormSave = true;
             // }
             SaveManager.saveJsonObject = jsonObject;
-            SaveManager.DeserializeSaveObjects(SaveManager.saveJsonObject);
+            SaveManager.deserializeSaveObjects(SaveManager.saveJsonObject);
             SaveManager._isLoading = true;
             // console.warn("On load storage", SaveManager.saveJsonObject, SaveManager._isLoadFormSave, jsonObject);
             resolve();
@@ -84,15 +84,15 @@ export default class SaveManager {
         });
     }
 
-    public static async Save(localOnly: boolean = false): Promise<void> {
+    public static async save(localOnly: boolean = false): Promise<void> {
         SaveManager.saveBeforeEvent.dispatchAction();
-        let jsonObject = SaveManager.SerializeSaveObjects();
+        let jsonObject = SaveManager.serializeSaveObjects();
         // return new Promise((resolve, reject) => {
         //     GameStorage.Upload(!sys.isMobile || localOnly, jsonObject, resolve, reject);
         // });
     }
 
-    public static async Clear(version?: number): Promise<void> {
+    public static async clear(version?: number): Promise<void> {
         SaveManager.saveJsonObject = { version: undefined };
         SaveManager.saveObject.clear();
         // return new Promise((resolve, reject) => {
@@ -100,30 +100,24 @@ export default class SaveManager {
         // });
     }
 
-    private static gameId: string;
-    /** GameId为一串字符串组成，用.来分隔每一段。比喻：com.company.gamename.platform */
-    public static SetGameId(gameId: string): void {
-        SaveManager.gameId = gameId;
-    }
-
-    public static GetStorageKey(key: string): string {
+    public static getStorageKey(key: string): string {
         // return `${SaveManager.gameId}.${key}`;
         return `${"gameId"}_${key}`;
     }
 
-    public static GetStorage(key: string): string {
-        return sys.localStorage.getItem(SaveManager.GetStorageKey(key));
+    public static getStorage(key: string): string {
+        return sys.localStorage.getItem(SaveManager.getStorageKey(key));
     }
 
-    public static SetStorage(key: string, value: string): void {
-        sys.localStorage.setItem(SaveManager.GetStorageKey(key), value);
+    public static setStorage(key: string, value: string): void {
+        sys.localStorage.setItem(SaveManager.getStorageKey(key), value);
     }
 
-    public static RemoveStorage(key: string): void {
-        sys.localStorage.removeItem(SaveManager.GetStorageKey(key));
+    public static removeStorage(key: string): void {
+        sys.localStorage.removeItem(SaveManager.getStorageKey(key));
     }
 
-    public static CheckStorage(): boolean {
+    public static checkStorage(): boolean {
         let jsonData: string = sys.localStorage.getItem("GameStorage.contentKey");
         return jsonData != null && jsonData != "";
     }

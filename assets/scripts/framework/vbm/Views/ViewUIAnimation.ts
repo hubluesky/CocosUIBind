@@ -14,15 +14,15 @@ export default class ViewUIAnimation extends Component {
     public get hasShowAnimation() { return !String.isEmptyOrNull(this.openingName); }
     public get hasHideAnimation() { return !String.isEmptyOrNull(this.closeingName); }
 
-    public async ShowAnimation() {
-        return this.PlayAnimation(this.openingName);
+    public async showAnimation() {
+        return this.playAnimation(this.openingName);
     }
 
-    public async HideAnimation() {
-        return this.PlayAnimation(this.closeingName);
+    public async hideAnimation() {
+        return this.playAnimation(this.closeingName);
     }
 
-    private async PlayAnimation(animationName: string) {
+    private async playAnimation(animationName: string) {
         if (String.isEmptyOrNull(animationName)) return;
         this.uiAnimation.stop();
         let animationStatus = this.uiAnimation.play(animationName);

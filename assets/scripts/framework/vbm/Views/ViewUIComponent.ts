@@ -10,38 +10,38 @@ export default class ViewUIComponent extends ViewComponent implements IViewContr
     public get onShowViewOnceEvent(): ActionEvent<[IViewController]> { return this.viewUI.onShowViewOnceEvent; }
     public get onHideViewOnceEvent(): ActionEvent<[IViewController]> { return this.viewUI.onHideViewOnceEvent; }
 
-    public InitViewUI(viewUI: IViewController): IViewController {
-        viewUI.OnCreated = this.OnCreated.bind(this);
-        viewUI.OnSetParams = this.OnSetParams.bind(this);
-        viewUI.OnShowView = this.OnShowView.bind(this);
-        viewUI.OnHideView = this.OnHideView.bind(this);
-        viewUI.GetViewType = this.GetViewType.bind(this);
+    public initViewUI(viewUI: IViewController): IViewController {
+        viewUI.onCreated = this.onCreated.bind(this);
+        viewUI.onSetParams = this.onSetParams.bind(this);
+        viewUI.onShowView = this.onShowView.bind(this);
+        viewUI.onHideView = this.onHideView.bind(this);
+        viewUI.getViewType = this.getViewType.bind(this);
 
-        this.SetViewConfig = viewUI.SetViewConfig.bind(viewUI);
-        this.InternalShow = viewUI.InternalShow.bind(viewUI);
-        this.InternalHide = viewUI.InternalHide.bind(viewUI);
-        this.DestroyAsset = viewUI.DestroyAsset.bind(viewUI);
+        this.setViewConfig = viewUI.setViewConfig.bind(viewUI);
+        this.__internalShow = viewUI.__internalShow.bind(viewUI);
+        this.__internalHide = viewUI.__internalHide.bind(viewUI);
+        this.destroyAsset = viewUI.destroyAsset.bind(viewUI);
         // this.CreateAsset = viewUI.CreateAsset.bind(viewUI);
-        this.ShowView = viewUI.ShowView.bind(viewUI);
-        this.HideView = viewUI.HideView.bind(viewUI);
-        super.InitViewUI(viewUI);
+        this.showView = viewUI.showView.bind(viewUI);
+        this.hideView = viewUI.hideView.bind(viewUI);
+        super.initViewUI(viewUI);
         return this;
     }
 
     public get viewConfig() { return this.viewUI.viewConfig; }
     public get viewNode() { return this.viewUI.viewNode; }
     public get isShowing() { return this.viewUI.isShowing; }
-    public GetViewType() { return this.constructor; }
-    public SetViewConfig(viewConfig: ViewConfig): void { }
-    public async InternalShow(): Promise<void> { }
-    public async InternalHide(): Promise<void> { }
-    public DestroyAsset(): void { }
-    public async CreateAsset(): Promise<void> { }
-    public async ShowView<T extends IViewController>(...params: Parameters<T[OnSetParamsName]>): Promise<ReturnType<T[OnSetParamsName]>> { return null; }
-    public async HideView(): Promise<void> { }
-    public OnCreated(): Promise<void> | void { }
-    public OnSetParams(...params: any[]): any { }
-    public OnShowView(): void { }
-    public OnHideView(): void { }
-    public OnDestroyed(): void { }
+    public getViewType() { return this.constructor; }
+    public setViewConfig(viewConfig: ViewConfig): void { }
+    public async __internalShow(): Promise<void> { }
+    public async __internalHide(): Promise<void> { }
+    public destroyAsset(): void { }
+    public async createAsset(): Promise<void> { }
+    public async showView<T extends IViewController>(...params: Parameters<T[OnSetParamsName]>): Promise<ReturnType<T[OnSetParamsName]>> { return null; }
+    public async hideView(): Promise<void> { }
+    public onCreated(): Promise<void> | void { }
+    public onSetParams(...params: any[]): any { }
+    public onShowView(): void { }
+    public onHideView(): void { }
+    public onDestroyed(): void { }
 }

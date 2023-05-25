@@ -18,13 +18,13 @@ export default class LoadingUI extends Component {
         LoadingUI._default = this;
     }
 
-    public Show(progress: number = 0): void {
+    public show(progress: number = 0): void {
         this.node.active = true;
         this.node.alpha = 1;
-        this.OnProgressChanged(progress);
+        this.onProgressChanged(progress);
     }
 
-    public async Hide(fadeoutTime?: number) {
+    public async hide(fadeoutTime?: number) {
         if (fadeoutTime == null || fadeoutTime <= 0) {
             this.node.active = false;
         } else {
@@ -37,13 +37,13 @@ export default class LoadingUI extends Component {
         }
     }
 
-    public OnProgressChanged(progress: number, text: string = ""): void {
+    public onProgressChanged(progress: number, text: string = ""): void {
         this.progressBar.progress = progress;
         if (this.progressLabel != null)
             this.progressLabel.string = `${text}${Math.round(progress * 100)}%`;
     }
 
-    public SetProgressText(text: string): void {
+    public setProgressText(text: string): void {
         if (this.progressLabel != null)
             this.progressLabel.string = text;
     }

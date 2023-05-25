@@ -42,7 +42,7 @@ export default class NodePool {
 
     public static async createNode(assetPath: string | KeyType, position?: Readonly<Vec3>, rotation?: Readonly<Quat>): Promise<Node> {
         if (typeof assetPath === `string`)
-            assetPath = await AssetManager.Default.LoadRes<Prefab>(assetPath, Prefab);
+            assetPath = await AssetManager.loadRes<Prefab>(assetPath, Prefab);
         const list = NodePool.getPoolList(assetPath);
         let node = list.pop();
         if (node == null)

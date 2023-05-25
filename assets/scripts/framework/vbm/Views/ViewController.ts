@@ -24,61 +24,61 @@ export default class ViewController implements IViewController {
     public get component(): ViewComponent { return this._component; }
     private uiAnimation: ViewUIAnimation;
 
-    public GetViewType(): Function | string {
+    public getViewType(): Function | string {
         return this.constructor;
     }
 
-    public SetViewConfig(viewConfig: ViewConfig): void {
+    public setViewConfig(viewConfig: ViewConfig): void {
         if (viewConfig == null) throw new Error(`Set view config failed! ${this.constructor.name} has not register.`);
         this._viewConfig = viewConfig;
     }
 
-    public DestroyAsset(): void {
+    public destroyAsset(): void {
         if (this.viewNode != null) {
             this.viewNode.destroy();
             this._viewNode = null;
         }
     }
 
-    public async CreateAsset(): Promise<void> {
+    public async createAsset(): Promise<void> {
         if (this.viewNode != null) return;
         const loadedAsset = "loadedAsset";
         if (this[loadedAsset] != null) return this[loadedAsset];
-        this[loadedAsset] = this.CreateViewAsset();
+        this[loadedAsset] = this.createViewAsset();
         await this[loadedAsset];
         this[loadedAsset] = undefined;
     }
 
     /** 创建View的UI资源回调 */
-    protected async CreateViewAsset(): Promise<void> {
-        await this.OnCreateViewNodeAsset();
+    protected async createViewAsset(): Promise<void> {
+        await this.onCreateViewNodeAsset();
         this.uiAnimation = this.viewNode.getComponent(ViewUIAnimation);
         this._component = this.viewNode.getComponent(ViewComponent);
         if (this.component != null) {
-            let viewUI = this.component.InitViewUI(this);
+            let viewUI = this.component.initViewUI(this);
             if (viewUI != this)
-                ViewUIManager.SetView(this.component.constructor, viewUI);
+                ViewUIManager.setView(this.component.constructor, viewUI);
         }
-        return this.OnCreated();
+        return this.onCreated();
     }
 
-    protected async OnCreateViewNodeAsset(): Promise<void> {
-        this._viewNode = await ViewUIManager.CreateAsset(this.viewConfig);
+    protected async onCreateViewNodeAsset(): Promise<void> {
+        this._viewNode = await ViewUIManager.createAsset(this.viewConfig);
     }
 
-    public async ShowView<T extends IViewController>(...params: Parameters<T[OnSetParamsName]>): Promise<ReturnType<T[OnSetParamsName]>> {
+    public async showView<T extends IViewController>(...params: Parameters<T[OnSetParamsName]>): Promise<ReturnType<T[OnSetParamsName]>> {
         if (this._isShowing) return;
         this._isShowing = true;
         if (this.viewNode == null) {
-            await this.CreateAsset();
+            await this.createAsset();
             if (!this._isShowing) {
                 this.viewNode.active = false;
                 return;
             }
         }
 
-        ViewUIManager.ExecuteShowRule(this)
-        let result = this.OnSetParams(...params);
+        ViewUIManager.executeShowRule(this)
+        let result = this.onSetParams(...params);
         if (result instanceof Promise) {
             await result;
             if (!this._isShowing) {
@@ -89,23 +89,23 @@ export default class ViewController implements IViewController {
         this.onSetParamsEvent.dispatchAction(true, this);
         this.onSetParamsOnceEvent.dispatchAction(true, this);
         this.onSetParamsOnceEvent.clearEvents();
-        await ViewUIManager.InternalShowView(this);
+        await ViewUIManager.__internalShowView(this);
         return result;
     }
 
-    public async HideView(): Promise<void> {
+    public async hideView(): Promise<void> {
         if (!this._isShowing) return;
-        return ViewUIManager.InternalHideView(this);
+        return ViewUIManager.__internalHideView(this);
     }
 
-    public async InternalShow(): Promise<void> {
+    public async __internalShow(): Promise<void> {
         this._isShowing = true;
-        this.ActiveNode(true);
+        this.activeNode(true);
 
         if (this.uiAnimation != null && this.uiAnimation.hasShowAnimation)
-            await this.uiAnimation.ShowAnimation();
+            await this.uiAnimation.showAnimation();
 
-        this.OnShowView();
+        this.onShowView();
 
         ViewUIManager.onShowViewEvent.dispatchAction(this, true);
         this.onShowViewEvent.dispatchAction(true, this);
@@ -113,9 +113,9 @@ export default class ViewController implements IViewController {
         this.onShowViewOnceEvent.clearEvents();
     }
 
-    public async InternalHide(): Promise<void> {
+    public async __internalHide(): Promise<void> {
         this._isShowing = false;
-        this.OnHideView();
+        this.onHideView();
 
         ViewUIManager.onShowViewEvent.dispatchAction(this, false);
         this.onShowViewEvent.dispatchAction(false, this);
@@ -124,19 +124,19 @@ export default class ViewController implements IViewController {
 
         if (this.viewNode != null && !this.isShowing) {
             if (this.uiAnimation != null && this.uiAnimation.hasHideAnimation)
-                await this.uiAnimation.HideAnimation();
+                await this.uiAnimation.hideAnimation();
             if (this._isShowing) return;
-            this.ActiveNode(false);
+            this.activeNode(false);
         }
     }
 
-    protected ActiveNode(active: boolean) {
+    protected activeNode(active: boolean) {
         this.viewNode.active = active;
     }
 
-    public OnCreated(): Promise<void> | void { }
-    public OnSetParams(...params: any[]): any { }
-    public OnShowView(): void { }
-    public OnHideView(): void { }
-    public OnDestroyed(): void { }
+    public onCreated(): Promise<void> | void { }
+    public onSetParams(...params: any[]): any { }
+    public onShowView(): void { }
+    public onHideView(): void { }
+    public onDestroyed(): void { }
 }

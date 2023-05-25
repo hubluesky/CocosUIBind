@@ -5,7 +5,7 @@ interface OnBindChangedEvent<T> {
     __proxy__: any;
 }
 
-export function MakeBindDataProxy<T>(instance: T): T & OnBindChangedEvent<T> {
+export function makeBindDataProxy<T>(instance: T): T & OnBindChangedEvent<T> {
     if (Object.hasProperty<OnBindChangedEvent<T>>(instance, "__proxy__") && instance.__proxy__ != null) return instance.__proxy__;
     type ProxyType = T & OnBindChangedEvent<T>;
     let newInstance: ProxyType = instance as ProxyType;
@@ -23,10 +23,9 @@ export function MakeBindDataProxy<T>(instance: T): T & OnBindChangedEvent<T> {
 }
 
 export default class BindEvent<T> {
-    protected readonly OnPropertyChangedFunc = this.OnPropertyChanged.bind(this);
     protected readonly propertiesMap = new Map<PropertyKey, Action<[T, any]>[]>();
 
-    public AddPropertyChanged(key: ObjectProperties<T>, onPropertyChanged: Action<[T, any]>): boolean {
+    public addPropertyChanged(key: ObjectProperties<T>, onPropertyChanged: Action<[T, any]>): boolean {
         let eventList = this.propertiesMap.get(key);
         if (eventList == null) {
             eventList = [];
@@ -37,25 +36,25 @@ export default class BindEvent<T> {
         return !!eventList.push(onPropertyChanged);
     }
 
-    public RemovePropertyChanged(key: ObjectProperties<T>, onPropertyChanged: Action<[T, any]>): boolean {
+    public removePropertyChanged(key: ObjectProperties<T>, onPropertyChanged: Action<[T, any]>): boolean {
         let eventList = this.propertiesMap.get(key);
         if (eventList == null) return false;
         return eventList.remove(onPropertyChanged) != null;
     }
 
-    public BindObject(instance: T): T {
-        let newInstance = MakeBindDataProxy(instance);
-        newInstance.__propertiesChanged__.addEvent(this.OnPropertyChangedFunc);
+    public bindObject(instance: T): T {
+        let newInstance = makeBindDataProxy(instance);
+        newInstance.__propertiesChanged__.addEvent(this.onPropertyChanged, this);
         return newInstance;
     }
 
-    public UnbindObject(instance: T): void {
+    public unbindObject(instance: T): void {
         if (instance != null && Object.hasProperty<OnBindChangedEvent<T>>(instance, "__propertiesChanged__")) {
-            instance.__propertiesChanged__.removeEvent(this.OnPropertyChangedFunc);
+            instance.__propertiesChanged__.removeEvent(this.onPropertyChanged, this);
         }
     }
 
-    public OnPropertyChanged(data: T, key: PropertyKey, value: any): void {
+    public onPropertyChanged(data: T, key: PropertyKey, value: any): void {
         let eventList = this.propertiesMap.get(key);
         if (eventList == null) return;
         for (let action of eventList)

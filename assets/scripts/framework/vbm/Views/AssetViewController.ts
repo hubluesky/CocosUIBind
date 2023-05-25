@@ -13,27 +13,27 @@ export default class AssetViewController extends ViewController {
         this.assetName = assetName;
     }
 
-    protected async OnCreateViewNodeAsset(): Promise<void> {
-        this._viewNode = await ViewUIManager.CreateNodeAsset(this.assetName, null);
+    protected async onCreateViewNodeAsset(): Promise<void> {
+        this._viewNode = await ViewUIManager.createNodeAsset(this.assetName, null);
         let assetUI = this.viewNode.getComponent(AssetUIComponent);
-        ViewUIManager.RegisterType(this.assetName, this.assetName, assetUI.layer, assetUI.showRule, assetUI.hideRule);
-        super.SetViewConfig(ViewUIManager.GetViewConfig(this.assetName));
-        this.viewNode.setParent(ViewUIManager.GetLayerNode(assetUI.layer));
+        ViewUIManager.registerType(this.assetName, this.assetName, assetUI.layer, assetUI.showRule, assetUI.hideRule);
+        super.setViewConfig(ViewUIManager.getViewConfig(this.assetName));
+        this.viewNode.setParent(ViewUIManager.getLayerNode(assetUI.layer));
     }
 
-    public OnSetParams(onCompleted?: Action): void {
+    public onSetParams(onCompleted?: Action): void {
         this.onCompleted = onCompleted;
     }
 
-    public OnHideView(): void {
+    public onHideView(): void {
         if (this.onCompleted) this.onCompleted();
     }
 
-    public GetViewType(): Function | string {
+    public getViewType(): Function | string {
         return this.assetName;
     }
 
-    public SetViewConfig(viewConfig: ViewConfig): void {
+    public setViewConfig(viewConfig: ViewConfig): void {
         // Do nothing.
     }
 }
