@@ -6,8 +6,8 @@
   "compilerOptions": {
     "strict": false,
     "paths": {
-      "common/*": [
-        "./assets/scripts/common/*"
+      "framework/*": [
+        "./assets/scripts/framework/*"
       ]
     }
   }

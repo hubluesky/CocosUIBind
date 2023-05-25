@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "0a72cfd0-e4dc-410c-89d3-0d5a43062eed",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Script/Framework/Core/Setup/SystemSetupManager.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}

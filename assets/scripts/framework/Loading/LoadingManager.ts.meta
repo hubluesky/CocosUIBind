@@ -1,0 +1,13 @@
+{
+  "ver": "4.0.23",
+  "importer": "typescript",
+  "imported": true,
+  "uuid": "43054786-4680-43bd-b232-f5fbc4d90405",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "moduleId": "project:///assets/Scenes/Loading/LoadingManager.js",
+    "importerSettings": 0,
+    "simulateGlobals": []
+  }
+}
