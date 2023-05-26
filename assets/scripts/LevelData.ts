@@ -14,6 +14,8 @@ export default class LevelData extends Serializable {
      /** 当前资源值 */
      @serializeField()
      private readonly resourceValues: ResourceType[] = [];
+
+     public readonly test:number = 0;
  
      /**
       * 获得资源容量

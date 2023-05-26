@@ -2,6 +2,15 @@ import { Action } from "framework/utility/ActionEvent";
 import BindUIComponent from "./BindUIComponent";
 
 type Type = Function;
+type IsArray<T> = T extends Array<any> ? true : false;
+
+interface PropertyChanged<U = BindUIComponent, UP = any, D = any, DP = any> {
+    (ui: U, uiProperty: UP, data: D, dataProperty: DP): void;
+}
+
+interface ArrayElementChanged<U, UP, D, DP, I> {
+    (ui: U, uiProperty: UP, data: D, dataProperty: DP, index: I): void;
+}
 
 /**
  * 绑定UI属性
@@ -9,16 +18,18 @@ type Type = Function;
  * @param propertyName 绑定数据对象属性
  * @param onPropertyChanged 自处理属性回调处理
  */
-export function bindUIField<T extends AnyConstructor>(classType: T, propertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>) {
-    return function (target: Object, uiPropertyName: PropertyKey) {
+export function bindUIField<U extends BindUIComponent, UP extends ObjectProperties<U>, T extends AnyConstructor, I extends InstanceType<T>, P extends ObjectProperties<I>>
+    (classType: T, propertyName: P, onPropertyChanged?: PropertyChanged<U, U[UP], I, I[P]>) {
+    return function (target: U, uiPropertyName: UP) {
         if (!BindUIComponent.isPrototypeOf(target.constructor)) throw new Error(`Bind field in class must a UIComponent. ${target.constructor}`);
         if (classType == null) throw new Error(`Bind ${propertyName?.toString()} field faile, class type is null, Does the classType object and the target object refer to each other?`);
         BindUIManager.addField<T>(target.constructor, uiPropertyName, false, classType.prototype.constructor, propertyName, onPropertyChanged);
     };
 }
 
-export function bindUIArrayField<T extends AnyConstructor>(classType: T, propertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>) {
-    return function (target: Object, uiPropertyName: PropertyKey) {
+export function bindUIArrayField<U extends BindUIComponent, UP extends ObjectProperties<U>, T extends AnyConstructor, I extends InstanceType<T>, P extends ObjectProperties<I>>
+    (classType: T, propertyName: P, onPropertyChanged?: PropertyChanged<U, U[UP], I, I[P]>) {
+    return function (target: U, uiPropertyName: UP) {
         if (!BindUIComponent.isPrototypeOf(target.constructor)) throw new Error(`Bind field in class must a UIComponent. ${target.constructor}`);
         if (classType == null) throw new Error(`Bind ${propertyName?.toString()} field faile, class type is null, Does the classType object and the target object refer to each other?`);
         BindUIManager.addField<T>(target.constructor, uiPropertyName, true, classType.prototype.constructor, propertyName, onPropertyChanged);
@@ -32,7 +43,7 @@ export interface BindUIPropertyDesc {
     uiPropertyName: PropertyKey;
     isArray: boolean;
     dataPropertyName: PropertyKey;
-    onPropertyChanged?: Action<[BindUIComponent, any, any, any]>;
+    onPropertyChanged?: PropertyChanged;
 }
 
 /**
@@ -76,7 +87,7 @@ export default class BindUIManager {
      * @param dataPropertyName 绑定对象属性名称
      * @param onPropertyChanged 属性修改回调函数
      */
-    public static addField<T extends AnyConstructor>(uiClassType: Type, uiPropertyName: PropertyKey, isArray: boolean, dataType: T, dataPropertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: Action<[BindUIComponent, any, InstanceType<T>, any]>): void {
+    public static addField<T extends AnyConstructor>(uiClassType: Type, uiPropertyName: PropertyKey, isArray: boolean, dataType: T, dataPropertyName: ObjectProperties<InstanceType<T>>, onPropertyChanged?: PropertyChanged): void {
         let bindUIObject = BindUIManager.bindMap.get(uiClassType);
         if (bindUIObject == null) {
             bindUIObject = new BindUIObjectDesc();

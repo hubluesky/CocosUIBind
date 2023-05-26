@@ -13,28 +13,30 @@ const { ccclass, property } = _decorator;
 @registerView("LevelUI", ViewLayer.NormalLayer)
 export class LevelUI extends ViewUIComponent {
     @property(ProgressBar)
-    @bindUIArrayField(LevelData, "resourceCapacitys", (levelUI: LevelUI, p2, levelData, p4) => levelUI.onWoodChanged(levelData))
-    private readonly woodProgress: ProgressBar;
+    // @bindUIField2(LevelData, "resourceCapacitys", (levelUI: LevelUI, p2, levelData, p4) => levelUI.onWoodChanged(levelData))
+    // @computed(())
+    @bindUIField(LevelData, "resourceCapacitys", (u, up, d, dp) => u.onWoodChanged(up, d, dp))
+    public readonly woodProgress: ProgressBar;
     @property(Label)
-    private readonly woodLabel: Label;
+    public readonly woodLabel: Label;
     @property(ProgressBar)
-    private readonly oreProgress: ProgressBar;
+    public readonly oreProgress: ProgressBar;
     @property(Label)
-    private readonly oreLabel: Label;
+    public readonly oreLabel: Label;
     @property(BindArrayComponent)
-    private buildingList: BindArrayComponent;
+    public buildingList: BindArrayComponent;
 
     public onCreated(): void {
         let levelData = ModelManager.getModel(LevelData);
         this.addBindObject(levelData);
 
-        this.scheduleOnce(()=> {
+        this.scheduleOnce(() => {
             levelData.modifyResourceValue(ResourceType.Wood, 34);
         }, 3);
     }
 
-    private onWoodChanged(levelData: LevelData): void {
-        this.woodProgress.progress = levelData.getResourceValue(ResourceType.Wood) / levelData.getResourceCapacity(ResourceType.Wood);
+    private onWoodChanged(woodProgress: ProgressBar, levelData: LevelData, resourceCapacitys: readonly ResourceType[]): void {
+        woodProgress.progress = levelData.getResourceValue(ResourceType.Wood) / levelData.getResourceCapacity(ResourceType.Wood);
         console.log("onWoodChanged");
     }
 }
