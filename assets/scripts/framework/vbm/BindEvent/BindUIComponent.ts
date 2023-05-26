@@ -1,10 +1,10 @@
 import { Component } from "cc";
-import BindEvent from "./BindEvent";
+import BindObjectEvent from "./BindObjectEvent";
 import BindUIHandlerManager from "./BindUIHandlerManager";
 import BindUIManager, { BindUIPropertyDesc } from "./BindUIManager";
 
 interface BindTarget<T> {
-    event: BindEvent<T>;
+    event: BindObjectEvent<T>;
     classType: Function;
     bindTarget?: T;
     propertiesName: PropertyKey[];
@@ -65,11 +65,12 @@ export default abstract class BindUIComponent extends Component {
         }
     }
 
-    private initPropertiesChanged<T>(propertyList: BindUIPropertyDesc[], classType: Function): void {
-        let bindTarget: BindTarget<T> = { event: new BindEvent<T>(), classType: classType, propertiesName: [] };
-        for (let property of propertyList) {
-            let uiPropertyValue = this[property.uiPropertyName];
-            let propertyChanged = property.onPropertyChanged || (property.isArray ? BindUIHandlerManager.getUIArrayHandler(uiPropertyValue, property.dataPropertyName) : BindUIHandlerManager.getUIHandler(uiPropertyValue));
+    private initPropertiesChanged<T>(propertiesDesc: BindUIPropertyDesc[], classType: Function): void {
+        let bindTarget: BindTarget<T> = { event: new BindObjectEvent<T>(), classType: classType, propertiesName: [] };
+        for (let property of propertiesDesc) {
+            const uiPropertyValue = this[property.uiPropertyName];
+            const propertyChanged = property.isArray ? BindUIHandlerManager.getUIArrayHandler(uiPropertyValue, property.dataPropertyName, property.onPropertyChanged) : (property.onPropertyChanged ?? BindUIHandlerManager.getUIHandler(uiPropertyValue));
+
             bindTarget.propertiesName.push(property.dataPropertyName);
             bindTarget.event.addPropertyChanged(<any>property.dataPropertyName, (data, value) => {
                 propertyChanged(this, uiPropertyValue, data, value);

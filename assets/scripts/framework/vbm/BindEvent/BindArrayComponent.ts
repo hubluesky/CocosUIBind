@@ -1,7 +1,8 @@
 import { Component, _decorator } from "cc";
-import BindArrayEvent, { BindArrayEventType } from "./BindArrayEvent";
 import BindArrayHandler from "./BindArrayHandler";
 import BindArrayItemComponent from "./BindArrayItemComponent";
+import BindArrayEvent from "./BindArrayEvent";
+import { BindArrayEventType } from "./BindBaseEvent";
 
 const { ccclass, menu, property } = _decorator;
 @ccclass
@@ -10,11 +11,11 @@ export default class BindArrayComponent extends Component implements BindArrayHa
     @property
     private indexOffset: number = 0;
 
-    private bindEvent = new BindArrayEvent<any>();
-    private bindArray: any[] = null;
+    public readonly bindArrayEvent = new BindArrayEvent<any>();
+    private bindArrayObject: any[] = null;
 
     onLoad(): void {
-        this.bindEvent.addArrayChanged((dataList, type, index: string | number, value, oldValue) => {
+        this.bindArrayEvent.addArrayChanged((dataList, type, index: string | number, value, oldValue) => {
             switch (type) {
                 case BindArrayEventType.Add:
                 case BindArrayEventType.Update:
@@ -29,42 +30,43 @@ export default class BindArrayComponent extends Component implements BindArrayHa
     }
 
     onEnable(): void {
-        if (this.bindArray != null) {
-            this.bindEvent.bindObject(this.bindArray);
+        if (this.bindArrayObject != null) {
+            this.bindArrayEvent.bindObject(this.bindArrayObject);
             this.node.enabledAllChild(false, this.indexOffset);
             this.updateDataList();
         }
     }
 
     onDisable(): void {
-        if (this.bindArray != null)
-            this.bindEvent.unbindObject(this.bindArray);
+        if (this.bindArrayObject != null)
+            this.bindArrayEvent.unbindObject(this.bindArrayObject);
     }
 
-    private unBindTarget(): void {
-        if (this.bindArray != null) {
-            this.bindEvent.unbindObject(this.bindArray);
-            this.bindArray = null;
+    public bindArray<T extends any>(array: T[]): T[] {
+        this.node.enabledAllChild(false, this.indexOffset);
+        this.unbindArray();
+        if (array == null) return;
+        const proxy = this.bindArrayEvent.bindObject(array);
+        this.bindArrayObject = array;
+        if (this.enabledInHierarchy)
+            this.updateDataList();
+        return proxy;
+    }
+
+    public unbindArray(): void {
+        if (this.bindArrayObject != null) {
+            this.bindArrayEvent.unbindObject(this.bindArrayObject);
+            this.bindArrayObject = null;
         }
     }
 
-    public setBindArray(array: any[]): void {
-        this.onPropertyChanged(array);
-    }
-
     public onPropertyChanged(array: any[]): void {
-        this.node.enabledAllChild(false, this.indexOffset);
-        this.unBindTarget();
-        if (array == null) return;
-        this.bindEvent.bindObject(array);
-        this.bindArray = array;
-        if (this.enabledInHierarchy)
-            this.updateDataList();
+        this.bindArray(array);
     }
 
     private resizeDataList(): void {
-        if (this.bindArray.length >= this.node.children.length) return;
-        let count = this.node.children.length + this.indexOffset - this.bindArray.length;
+        if (this.bindArrayObject.length >= this.node.children.length) return;
+        let count = this.node.children.length + this.indexOffset - this.bindArrayObject.length;
         for (let i = 0; i < count; i++) {
             let itemUINode = this.node.children[this.node.children.length - 1 - i];
             itemUINode.active = false;
@@ -72,8 +74,8 @@ export default class BindArrayComponent extends Component implements BindArrayHa
     }
 
     private updateDataList(): void {
-        for (let i = 0; i < this.bindArray.length; i++) {
-            this.updateDataItem(i, this.bindArray[i]);
+        for (let i = 0; i < this.bindArrayObject.length; i++) {
+            this.updateDataItem(i, this.bindArrayObject[i]);
         }
     }
 
@@ -82,7 +84,7 @@ export default class BindArrayComponent extends Component implements BindArrayHa
         let bindArrayItem = itemUINode.getComponent(BindArrayItemComponent);
         if (bindArrayItem != null) {
             bindArrayItem.setArrayItem(dataItem, index);
-            bindArrayItem.removeFromArray = () => this.bindArray.removeAt(index);
+            bindArrayItem.removeFromArray = () => this.bindArrayObject.removeAt(index);
         }
         bindArrayItem.node.active = true;
     }

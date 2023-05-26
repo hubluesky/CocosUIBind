@@ -15,7 +15,7 @@ export class LevelUI extends ViewUIComponent {
     @property(ProgressBar)
     // @bindUIField2(LevelData, "resourceCapacitys", (levelUI: LevelUI, p2, levelData, p4) => levelUI.onWoodChanged(levelData))
     // @computed(())
-    @bindUIField(LevelData, "resourceCapacitys", (u, up, d, dp) => u.onWoodChanged(up, d, dp))
+    @bindUIArrayField(LevelData, "resourceCapacitys", (u, up, d, dp) => u.onWoodChanged(up, d, dp))
     public readonly woodProgress: ProgressBar;
     @property(Label)
     public readonly woodLabel: Label;

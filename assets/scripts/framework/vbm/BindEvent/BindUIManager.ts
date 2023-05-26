@@ -1,16 +1,7 @@
-import { Action } from "framework/utility/ActionEvent";
+import { ArrayElementChanged, PropertyChanged } from "./BindBaseEvent";
 import BindUIComponent from "./BindUIComponent";
 
 type Type = Function;
-type IsArray<T> = T extends Array<any> ? true : false;
-
-interface PropertyChanged<U = BindUIComponent, UP = any, D = any, DP = any> {
-    (ui: U, uiProperty: UP, data: D, dataProperty: DP): void;
-}
-
-interface ArrayElementChanged<U, UP, D, DP, I> {
-    (ui: U, uiProperty: UP, data: D, dataProperty: DP, index: I): void;
-}
 
 /**
  * 绑定UI属性
@@ -28,7 +19,7 @@ export function bindUIField<U extends BindUIComponent, UP extends ObjectProperti
 }
 
 export function bindUIArrayField<U extends BindUIComponent, UP extends ObjectProperties<U>, T extends AnyConstructor, I extends InstanceType<T>, P extends ObjectProperties<I>>
-    (classType: T, propertyName: P, onPropertyChanged?: PropertyChanged<U, U[UP], I, I[P]>) {
+    (classType: T, propertyName: P, onPropertyChanged?: ArrayElementChanged<U, U[UP], I, I[P]>) {
     return function (target: U, uiPropertyName: UP) {
         if (!BindUIComponent.isPrototypeOf(target.constructor)) throw new Error(`Bind field in class must a UIComponent. ${target.constructor}`);
         if (classType == null) throw new Error(`Bind ${propertyName?.toString()} field faile, class type is null, Does the classType object and the target object refer to each other?`);
