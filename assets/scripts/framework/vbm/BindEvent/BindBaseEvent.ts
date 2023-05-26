@@ -26,7 +26,7 @@ export interface ArrayElementChanged<U = BindUIComponent, UP = any, D = any, DP 
 
 
 export function makeBindDataProxy<T>(instance: T): T & OnBindChangedEvent<T> {
-    if (Object.hasProperty<OnBindChangedEvent<T>>(instance, "__proxy__") && instance.__proxy__ != null) return instance.__proxy__;
+    if (Object.hasProperty<BaseChangedEvent>(instance, "__proxy__") && instance.__proxy__ != null) return instance.__proxy__;
     type ProxyType = T & OnBindChangedEvent<T>;
     let newInstance: ProxyType = instance as ProxyType;
     newInstance.__bindChangedEvent__ = new ActionEvent<[T, PropertyKey, any]>();
@@ -49,12 +49,13 @@ export enum BindArrayEventType {
     Resize,
 }
 
-export interface OnBindArrayChangedEvent<T> extends BaseChangedEvent{
+export interface OnBindArrayChangedEvent<T> extends BaseChangedEvent {
     __bindChangedEvent__: ActionEvent<[T[], BindArrayEventType, PropertyKey, T, T]>;
 }
 
 export function makeBindArrayProxy<T>(instance: T[]): T[] & OnBindArrayChangedEvent<T> {
     if (Object.hasProperty<OnBindArrayChangedEvent<T>>(instance, "__proxy__") && instance.__proxy__ != null) return instance.__proxy__;
+    
     type ProxyType = T[] & OnBindArrayChangedEvent<T>;
     let newInstance: ProxyType = instance as ProxyType;
     newInstance.__bindChangedEvent__ = new ActionEvent<[T[], BindArrayEventType, PropertyKey, T, T]>();
@@ -87,24 +88,26 @@ export abstract class BindEvent<T> {
     public readonly onBindEvent = new ActionEvent<[T, T]>();
     public readonly onUnbindEvent = new ActionEvent<[T]>();
 
-    private instance: T;
-    public get hasBindTarget() { return this.instance != null; }
+    private _bindSource: T;
+    public get bindSource() { return this._bindSource; }
 
     public bindObject(instance: T): T {
         this.unbindObject();
         const newInstance = this.makeBindProxy(instance);
         newInstance.__bindChangedEvent__.addEvent(this.onPropertyChanged, this);
-        this.instance = newInstance;
+        this._bindSource = instance;
+        this.onBindEvent.dispatchAction(newInstance, instance);
         return newInstance;
     }
 
     public unbindObject(): void {
-        this._unbindObject(this.instance);
-        this.instance = null;
+        this._unbindObject(this.bindSource);
+        this._bindSource = null;
     }
 
     private _unbindObject(instance: T): void {
         if (instance && Object.hasProperty<BaseChangedEvent>(instance, "__bindChangedEvent__")) {
+            this.onUnbindEvent.dispatchAction(instance);
             instance.__bindChangedEvent__.removeEvent(this.onPropertyChanged, this);
         }
     }
