@@ -15,6 +15,8 @@ export default class SaveManager {
     public static get isLoadFormSave() { return SaveManager._isLoadFormSave; }
     public static get isFirstLoaded() { return !SaveManager._isLoadFormSave; }
 
+    private static storageKey: any;
+
     public static getJsonObject(key: string): JsonObject {
         return SaveManager.saveJsonObject[key];
     }
@@ -43,7 +45,8 @@ export default class SaveManager {
 
     public static async initialize(version: number, gameId: string): Promise<void> {
         console.time("SaveManager intialize time");
-        await this.load(version, gameId);
+        SaveManager.storageKey = gameId;
+        await SaveManager.load(version, gameId);
         let oldVersion = SaveManager.saveJsonObject.version || 0;
         if (oldVersion < version) {
             console.warn(`The storage version ${SaveManager.saveJsonObject.version} < current version ${version}, And clear old storage!`);
@@ -57,7 +60,7 @@ export default class SaveManager {
     public static async load(version: number, gameId: string): Promise<void> {
         return new Promise((resolve, reject) => {
             console.time("GameStorage Download");
-            const jsonText = sys.localStorage.getItem(gameId);
+            const jsonText = sys.localStorage.getItem(SaveManager.storageKey);
             const jsonObject = jsonText != null ? JSON.parse(jsonText) : { version: version };
             // GameStorage.Download((jsonObject) => {
             //     console.timeEnd("GameStorage Download");
@@ -87,6 +90,7 @@ export default class SaveManager {
     public static async save(localOnly: boolean = false): Promise<void> {
         SaveManager.saveBeforeEvent.dispatchAction();
         let jsonObject = SaveManager.serializeSaveObjects();
+        sys.localStorage.setItem(SaveManager.storageKey, JSON.stringify(jsonObject));
         // return new Promise((resolve, reject) => {
         //     GameStorage.Upload(!sys.isMobile || localOnly, jsonObject, resolve, reject);
         // });

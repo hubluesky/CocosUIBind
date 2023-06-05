@@ -17,8 +17,8 @@ export function serializeClass(uniqueName?: string, parentType?: Function): Func
     return function (target: any) {
         const type = target.prototype.constructor;
         if (!Serializable.isPrototypeOf(type)) throw new Error(`Serializable class must a Serializable. ${target}`);
-        SerializeManager.registerSerializeType(uniqueName, target, parentType);
-    }
+        SerializeManager.registerSerializeType(uniqueName ?? type.name, target, parentType);
+    };
 }
 
 /**
@@ -30,5 +30,5 @@ export function serializeField(serializeName?: string, fieldType?: Function) {
     return function (target: Object, propertyName: string) {
         if (!Serializable.isPrototypeOf(target.constructor)) throw new Error(`Serializable field of class must a Serializable. ${target.constructor.name}`);
         SerializeManager.registerField(target, propertyName, serializeName, fieldType);
-    }
+    };
 }
