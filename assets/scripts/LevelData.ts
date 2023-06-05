@@ -1,19 +1,21 @@
-import { bindObject } from "framework/vbm/BindEvent/BindObject";
+import { registerBindObject } from "framework/vbm/BindEvent/RegisterBindObject";
 import Serializable, { serializeClass, serializeField } from "framework/vbm/Storage/Serializable";
 import { ResourceType } from "./ResourceType";
 
 @serializeClass()
-@bindObject
+@registerBindObject
 export default class LevelData extends Serializable {
     /** 资源总容量 */
     @serializeField()
-    readonly resourceCapacitys: ResourceType[] = [];
+    readonly resourceCapacitys: ResourceType[] = [0, 0];
     /** 资源产出/每分钟的数量 */
     @serializeField()
-    readonly resourceProductions: ResourceType[] = [];
+    readonly resourceProductions: ResourceType[] = [0, 0];
     /** 当前资源值 */
     @serializeField()
-    readonly resourceValues: ResourceType[] = [];
+    readonly resourceValues: ResourceType[] = [0, 0];
+
+    public testNumber = 3;
 
     /**
      * 获得资源容量

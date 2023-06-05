@@ -1,17 +1,20 @@
-import { Action } from "framework/utility/ActionEvent";
-import { BindArrayEventType, BindEvent, makeBindArrayProxy, OnBindArrayChangedEvent } from "./BindBaseEvent";
+import { BindBaseEvent } from "./BindBaseEvent";
+import { BindArrayEventType, makeBindArrayProxy } from "./RegisterBindObject";
 
+interface ElementChanged<T> {
+    (array: T[], eventType: BindArrayEventType, key: PropertyKey, value: T, oldValue: T): void;
+}
 
-export default class BindArrayEvent<T> extends BindEvent<T[]>{
-    protected readonly eventList: Action<[T[], BindArrayEventType, PropertyKey, T, T]>[] = [];
+export default class BindArrayEvent<T> extends BindBaseEvent<T[]>{
+    protected readonly eventList: ElementChanged<T>[] = [];
 
-    public addArrayChanged(onPropertyChanged: Action<[T[], BindArrayEventType, PropertyKey, T, T]>): boolean {
+    public addElementChanged(onPropertyChanged: ElementChanged<T>): boolean {
         if (this.eventList.contains(onPropertyChanged))
             return false;
         return !!this.eventList.push(onPropertyChanged);
     }
 
-    public removeArrayChanged(onPropertyChanged: Action<[T[], BindArrayEventType, PropertyKey, T, T]>): boolean {
+    public removeElementChanged(onPropertyChanged: ElementChanged<T>): boolean {
         return this.eventList.remove(onPropertyChanged) != null;
     }
 
@@ -19,7 +22,7 @@ export default class BindArrayEvent<T> extends BindEvent<T[]>{
         return makeBindArrayProxy(instance);
     }
 
-    protected onPropertyChanged(array: T[], eventType: BindArrayEventType, key: PropertyKey, value: T, oldValue: T): void {
+    public onEventChanged(array: T[], eventType: BindArrayEventType, key: PropertyKey, value: T, oldValue: T): void {
         for (const action of this.eventList)
             action(array, eventType, key, value, oldValue);
     }

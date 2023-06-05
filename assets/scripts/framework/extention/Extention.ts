@@ -119,7 +119,7 @@ declare global {
          * @param value 合并的值
          * @returns 返回拆分后的高低值
          */
-        splitInterval(value: number): { start: number, end: number };
+        splitInterval(value: number): { start: number, end: number; };
         /** 从区间里随机一位数，如果不是区间值，则返回该参数值 */
         randomInterval(value: number): number;
         /** 从区间里随机一位整数，如果不是区间值，则返回该参数值 */
@@ -134,7 +134,7 @@ declare global {
          * @param maxSpeed 最大速度，默认为Infinity
          * @param deltaTime 每帧的时长，默认为game.deltaTime
          */
-        smoothDamp(current: number, target: number, velocity: { current: number }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number;
+        smoothDamp(current: number, target: number, velocity: { current: number; }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number;
 
         /**
          * Gradually changes an angle given in degrees towards a desired goal angle over time.
@@ -145,7 +145,7 @@ declare global {
          * @param maxSpeed 最大速度，默认为Infinity
          * @param deltaTime 每帧的时长，默认为game.deltaTime
          */
-        smoothDampDegree(current: number, target: number, velocity: { current: number }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number;
+        smoothDampDegree(current: number, target: number, velocity: { current: number; }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number;
 
         /**
          * Gradually changes an angle given in degrees towards a desired goal angle over time.
@@ -156,7 +156,7 @@ declare global {
          * @param maxSpeed 最大速度，默认为Infinity
          * @param deltaTime 每帧的时长，默认为game.deltaTime
          */
-        smoothDampRadian(current: number, target: number, velocity: { current: number }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number;
+        smoothDampRadian(current: number, target: number, velocity: { current: number; }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number;
 
         /**
          * Lerp but makes sure the values interpolate correctly when they wrap around 360 degrees.
@@ -336,6 +336,7 @@ declare global {
     type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
     type ObjectProperties<T> = ObjectExclude<T, Function>;
     type ObjectFunctions<T> = ObjectInclude<T, Function>;
+    type ArrayElement<Array> = Array extends readonly (infer ElementType)[] ? ElementType : never;
 
     type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N ? Acc[number] : Enumerate<N, [...Acc, Acc['length']]>;
     type UintRange<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>;
@@ -382,32 +383,32 @@ Object.defineProperties(Math, {
 
 Math.floatEqual = (a: number, b: number, epsilon: number = Math.EPSILON) => {
     return Math.abs(a - b) <= epsilon;
-}
+};
 
 Math.minmax = (min: number, max: number, value: number) => {
     return Math.min(max, Math.max(min, value));
-}
+};
 
 Math.randomSign = () => {
     return Math.random() < 0.5 ? +1 : -1;
-}
+};
 
 Math.randomRange = (min: number, max: number) => {
     return min + Math.random() * (max - min);
-}
+};
 
 Math.randomIntRange = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min)) + min;
-}
+};
 
 Math.randomIntBetween = (start: number, end: number) => {
     return Math.floor(Math.random() * (end - start + 1)) + start;
-}
+};
 
 Math.randomArrayValue = function <T>(array: ReadonlyArray<T>): T {
     let index = Math.randomIntRange(0, array.length);
     return array[index];
-}
+};
 
 Math.randomArrayValues = function <T>(array: ReadonlyArray<T>, start: number = 0, count: number = array.length): T[] {
     count = Math.min(count, array.length - start);
@@ -424,49 +425,49 @@ Math.randomArrayValues = function <T>(array: ReadonlyArray<T>, start: number = 0
         temp.splice(index, 1);
     }
     return result;
-}
+};
 
 Math.lerp = (start: number, end: number, t: number) => {
     // return start * (1.0 - t) + end * t;
     return (end - start) * t + start;
-}
+};
 
 Math.inverseLerp = (min: number, max: number, value: number) => {
     if (Math.abs(max - min) < 0.001) return min;
     return (value - min) / (max - min);
-}
+};
 
 Math.clamp = (value: number, min: number, max: number) => {
     return value < min ? min : value > max ? max : value;
-}
+};
 
 Math.saturate = (value: number) => {
     return Math.clamp(value, 0, 1);
-}
+};
 
 Math.fraction = (angle: number) => {
     return angle - Math.trunc(angle);
-}
+};
 
 Math.mergeInterval = (start: number, end: number) => {
     return start << 16 | end & 0xFFFF;
-}
+};
 
 Math.splitInterval = (value: number) => {
     return { start: value >> 16, end: value & 0xFFFF };
-}
+};
 
 Math.randomInterval = (value: number) => {
     let interval = Math.splitInterval(value);
     return interval.start == 0 ? interval.end : Math.randomRange(interval.start, interval.end);
-}
+};
 
 Math.randomIntInterval = (value: number) => {
     let interval = Math.splitInterval(value);
     return interval.start == 0 ? interval.end : Math.randomIntBetween(interval.start, interval.end);
-}
+};
 
-Math.smoothDamp = (current: number, target: number, velocity: { current: number }, smoothTime: number, maxSpeed: number = Infinity, deltaTime: number = game.deltaTime): number => {
+Math.smoothDamp = (current: number, target: number, velocity: { current: number; }, smoothTime: number, maxSpeed: number = Infinity, deltaTime: number = game.deltaTime): number => {
     // Based on Game Programming Gems 4 Chapter 1.10
     smoothTime = Math.max(0.0001, smoothTime);
     let omega = 2 / smoothTime;
@@ -492,47 +493,47 @@ Math.smoothDamp = (current: number, target: number, velocity: { current: number 
     }
 
     return output;
-}
+};
 
-Math.smoothDampDegree = (current: number, target: number, velocity: { current: number }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number => {
+Math.smoothDampDegree = (current: number, target: number, velocity: { current: number; }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number => {
     target = current + Math.deltaDegree(current, target);
     return Math.smoothDamp(current, target, velocity, smoothTime, maxSpeed, deltaTime);
-}
+};
 
-Math.smoothDampRadian = (current: number, target: number, velocity: { current: number }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number => {
+Math.smoothDampRadian = (current: number, target: number, velocity: { current: number; }, smoothTime: number, maxSpeed?: number, deltaTime?: number): number => {
     target = current + Math.deltaRadian(current, target);
     return Math.smoothDamp(current, target, velocity, smoothTime, maxSpeed, deltaTime);
-}
+};
 
 Math.lerpDegree = (current: number, target: number, t: number): number => {
     let delta = Math.repeat(target - current, 360);
     if (delta > 180) delta -= 360;
     return current + delta * t;
-}
+};
 
 Math.lerpRadian = (current: number, target: number, t: number): number => {
     let delta = Math.repeat(target - current, Math.TWO_PI);
     if (delta > Math.PI) delta -= Math.TWO_PI;
     return current + delta * t;
-}
+};
 
 Math.repeat = (t: number, length: number): number => {
     return Math.clamp(t - Math.floor(t / length) * length, 0.0, length);
-}
+};
 
 Math.deltaDegree = (current: number, target: number): number => {
     let delta = Math.repeat((target - current), 360);
     if (delta > 180)
         delta -= 360;
     return delta;
-}
+};
 
 Math.deltaRadian = (current: number, target: number): number => {
     let delta = Math.repeat((target - current), Math.TWO_PI);
     if (delta > Math.PI)
         delta -= Math.TWO_PI;
     return delta;
-}
+};
 
 Math.toHash = (str: string) => {
     // from https://github.com/darkskyapp/string-hash/blob/master/index.js
@@ -549,7 +550,7 @@ Math.toHash = (str: string) => {
 // Date
 Date.getTimeSeconds = () => {
     return Date.now() / 1000;
-}
+};
 
 // Array
 Object.defineProperties(Array.prototype, {
@@ -576,31 +577,31 @@ if (Array.prototype.at == null) {
     Array.prototype.at = function <T>(this: T[], index: number): T {
         if (index < 0) return this[this.length + index];
         return this[index];
-    }
+    };
 }
 
 Array.prototype.isEmpty = function <T>(this: T[]): boolean {
     return this.length == 0;
-}
+};
 
 Array.prototype.remove = function <T>(this: T[], item: T): boolean {
     let index = this.indexOf(item);
     if (index == -1) return false;
     this.splice(index, 1);
     return true;
-}
+};
 
 Array.prototype.removeAt = function <T>(this: T[], index: number): T {
     return this.splice(index, 1)[0];
-}
+};
 
 Array.prototype.contains = function <T>(this: T[], item: T): boolean {
     return this.indexOf(item) != -1;
-}
+};
 
 Array.prototype.clear = function <T>(this: T[]): void {
     this.length = 0;
-}
+};
 
 for (const key in Object.keys(Array)) {
     Object.defineProperty(Array.prototype, key, { enumerable: false });
@@ -609,7 +610,7 @@ for (const key in Object.keys(Array)) {
 // String
 String.isEmptyOrNull = (value: string) => {
     return value == null || value == "";
-}
+};
 
 String.format = (format: string, ...params: any[]) => {
     return format.replace(/{(\d+)}/g, function (match, number) {
@@ -628,12 +629,12 @@ Object.assignDepth = function <T extends {}, U>(target: T, source: U): T & U {
         result[key] = Object.assignDepth(targetValue, sourceValue);
     }
     return result;
-}
+};
 
 Object.createInstance = function <T>(prototype: Object): T {
     let newInstance: T = Object.create(prototype);
     return newInstance.constructor.apply(newInstance);
-}
+};
 
 Object.createClass = function <T>(className: string, ...params: any[]): T {
     let newClass: any = new (<any>window)[className](params);
@@ -641,11 +642,11 @@ Object.createClass = function <T>(className: string, ...params: any[]): T {
     // let instance = Object.create(window[className].prototype);
     // instance.constructor.apply(instance, params);
     // return instance;
-}
+};
 
 Object.hasProperty = function <T>(instance: any, property: keyof T): instance is T {
     return property in instance;
-}
+};
 
 // Object.callInterface = function <T, F extends ObjectFunctions<T>>(object: Object, method: F, ...params: Parameters<T[F]>): void {
 //     if (Object.hasProperty<T>(object, method)) {
@@ -667,15 +668,15 @@ Function.prototype.before = function <T extends (...args: any[]) => any>(func: T
         if (func.apply(this, args) === false) return undefined;
         return __self.apply(this, args);
     };
-}
+};
 
 Function.prototype.after = function <T extends (...args: any[]) => any>(func: T) {
     let __self = this;
     return function (...args: any[]): any {
         let result = __self.apply(this, args);
         return func.apply(this, args) || result;
-    }
-}
+    };
+};
 
 // const oldLog = console.log;
 // console.log = function (...data: any[]): void {
@@ -698,7 +699,7 @@ Function.prototype.after = function <T extends (...args: any[]) => any>(func: T)
 
 console.logColor = function (data: any, color: string = "#00AAEE"): void {
     console.log(`%c${data}`, `color:${color}`);
-}
+};
 
 //---------------------------------------------------------------------------------------------------------------------------
-export { }
+export { };

@@ -1,7 +1,7 @@
 import { Component, _decorator } from "cc";
 import BindArrayEvent from "./BindArrayEvent";
 import BindArrayItemComponent from "./BindArrayItemComponent";
-import { BindArrayEventType } from "./BindBaseEvent";
+import { BindArrayEventType } from "./RegisterBindObject";
 
 const { ccclass, menu, property } = _decorator;
 @ccclass
@@ -13,7 +13,7 @@ export default class BindArrayComponent extends Component {
     public readonly bindArrayEvent = new BindArrayEvent<any>();
 
     onLoad(): void {
-        this.bindArrayEvent.addArrayChanged((dataList, type, index: string | number, value, oldValue) => {
+        this.bindArrayEvent.addElementChanged((dataList, type, index: string | number, value, oldValue) => {
             switch (type) {
                 case BindArrayEventType.Add:
                 case BindArrayEventType.Update:

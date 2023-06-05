@@ -7,21 +7,24 @@ import ViewUIComponent from './framework/vbm/Views/ViewUIComponent';
 import LevelData from './LevelData';
 import ModelManager from 'framework/vbm/Models/ModelManager';
 import { ResourceType } from './ResourceType';
+import { bindUILabelPrefixHandler } from 'framework/vbm/BindEvent/BindUIHandlers';
 const { ccclass, property } = _decorator;
 
 @ccclass('LevelUI')
 @registerView("LevelUI", ViewLayer.NormalLayer)
 export class LevelUI extends ViewUIComponent {
     @property(ProgressBar)
-    // @bindUIField2(LevelData, "resourceCapacitys", (levelUI: LevelUI, p2, levelData, p4) => levelUI.onWoodChanged(levelData))
+    // @bindUIField(LevelData, "testNumber")
     // @computed(())
-    @bindUIArrayField(LevelData, "resourceCapacitys", (u, up, d, dp) => u.onWoodChanged(up, d, dp))
+    @bindUIArrayField(LevelData, "resourceCapacitys", (ui, up, array, et, k, v, ov) => ui.onWoodChanged(up, array))
+    @bindUIArrayField(LevelData, "resourceValues", (ui, up, array, et, k, v, ov) => ui.onWoodChanged(up, array))
     public readonly woodProgress: ProgressBar;
     @property(Label)
     public readonly woodLabel: Label;
     @property(ProgressBar)
     public readonly oreProgress: ProgressBar;
     @property(Label)
+    // @bindUIField(LevelData, "testNumber", (ui, up, d, dp) => { })
     public readonly oreLabel: Label;
     @property(BindArrayComponent)
     public buildingList: BindArrayComponent;
@@ -30,13 +33,17 @@ export class LevelUI extends ViewUIComponent {
         let levelData = ModelManager.getModel(LevelData);
         this.addBindObject(levelData);
 
+        levelData.modifyResourceCapacity(ResourceType.Wood, 34);
         this.scheduleOnce(() => {
-            levelData.modifyResourceValue(ResourceType.Wood, 34);
-        }, 3);
+            levelData.modifyResourceValue(ResourceType.Wood, 30);
+
+            levelData.testNumber = 5;
+        }, 1);
     }
 
-    private onWoodChanged(woodProgress: ProgressBar, levelData: LevelData, resourceCapacitys: readonly ResourceType[]): void {
+    private onWoodChanged(woodProgress: ProgressBar, resourceCapacitys: readonly ResourceType[]): void {
+        let levelData = ModelManager.getModel(LevelData);
         woodProgress.progress = levelData.getResourceValue(ResourceType.Wood) / levelData.getResourceCapacity(ResourceType.Wood);
-        console.log("onWoodChanged");
+        console.log("onWoodChanged", levelData.getResourceValue(ResourceType.Wood), levelData.getResourceCapacity(ResourceType.Wood));
     }
 }
