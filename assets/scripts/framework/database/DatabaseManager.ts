@@ -1,15 +1,15 @@
 import Database from "./Database";
 
 export function registerDatabase(assetName?: string): Function {
-    return function (target: Function) {
+    return function (target: AnyConstructor) {
         if (!Database.isPrototypeOf(target))
             throw new Error(`Register database can only be used on a Database class.`);
         DatabaseManager.registerType(target, assetName);
     };
 }
 
-type Type<T extends Database> = { prototype: T; };
-type TypeDatabase = Type<Database>;
+// type Type<T extends Database> = { prototype: T; };
+type TypeDatabase = AnyConstructor<Database>;
 
 export default class DatabaseManager {
     private static typeMap = new Map<TypeDatabase, string>();
@@ -33,17 +33,18 @@ export default class DatabaseManager {
         }
     }
 
-    public static createDatabase<T extends Database>(type: Type<T>): T {
-        const database = Object.createInstance<T>(type.prototype);
+    public static createDatabase<T extends Database>(type: AnyConstructor<T>): T {
+        // const database = Object.createInstance<T>(type);
+        const database = new type();
         DatabaseManager.databaseMap.set(type, database);
         return database;
     }
 
-    public static get<T extends Database>(type: { prototype: T; }): T {
+    public static get<T extends Database>(type: AnyConstructor<T>): T {
         return DatabaseManager.databaseMap.get(type) as T;
     }
 
-    public static async getOrCreate<T extends Database>(type: Type<T>): Promise<T> {
+    public static async getOrCreate<T extends Database>(type: AnyConstructor<T>): Promise<T> {
         let database = DatabaseManager.databaseMap.get(type) as T;
         if (database != null) return database;
         const assetName = DatabaseManager.typeMap.get(type);

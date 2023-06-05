@@ -7,24 +7,22 @@ import ViewUIComponent from './framework/vbm/Views/ViewUIComponent';
 import LevelData from './LevelData';
 import ModelManager from 'framework/vbm/Models/ModelManager';
 import { ResourceType } from './ResourceType';
-import { bindUILabelPrefixHandler } from 'framework/vbm/BindEvent/BindUIHandlers';
+import DatabaseManager from 'framework/database/DatabaseManager';
+import BuildingDatabase, { BuildingPrototype } from './BuildingDatabase';
 const { ccclass, property } = _decorator;
 
 @ccclass('LevelUI')
 @registerView("LevelUI", ViewLayer.NormalLayer)
 export class LevelUI extends ViewUIComponent {
     @property(ProgressBar)
-    // @bindUIField(LevelData, "testNumber")
-    // @computed(())
-    @bindUIArrayField(LevelData, "resourceCapacitys", (ui, up, array, et, k, v, ov) => ui.onWoodChanged(up, array))
-    @bindUIArrayField(LevelData, "resourceValues", (ui, up, array, et, k, v, ov) => ui.onWoodChanged(up, array))
+    @bindUIArrayField(LevelData, "resourceCapacitys", (ui, up, array, et, k, v, ov) => ui.onWoodChanged())
+    @bindUIArrayField(LevelData, "resourceValues", (ui, up, array, et, k, v, ov) => ui.onWoodChanged())
     public readonly woodProgress: ProgressBar;
     @property(Label)
     public readonly woodLabel: Label;
     @property(ProgressBar)
     public readonly oreProgress: ProgressBar;
     @property(Label)
-    // @bindUIField(LevelData, "testNumber", (ui, up, d, dp) => { })
     public readonly oreLabel: Label;
     @property(BindArrayComponent)
     public buildingList: BindArrayComponent;
@@ -34,16 +32,19 @@ export class LevelUI extends ViewUIComponent {
         this.addBindObject(levelData);
 
         levelData.modifyResourceCapacity(ResourceType.Wood, 34);
-        this.scheduleOnce(() => {
-            levelData.modifyResourceValue(ResourceType.Wood, 30);
+        for (let i = 0; i < 10; i++) {
+            this.scheduleOnce(() => {
+                levelData.modifyResourceValue(ResourceType.Wood, 1);
+            }, i + 1);
+        }
 
-            levelData.testNumber = 5;
-        }, 1);
+        const buildingDatabase = DatabaseManager.get(BuildingDatabase);
+        this.buildingList.bindArrayEvent.bindObject(buildingDatabase.prototypeList);
     }
 
-    private onWoodChanged(woodProgress: ProgressBar, resourceCapacitys: readonly ResourceType[]): void {
+    private onWoodChanged(): void {
         let levelData = ModelManager.getModel(LevelData);
-        woodProgress.progress = levelData.getResourceValue(ResourceType.Wood) / levelData.getResourceCapacity(ResourceType.Wood);
-        console.log("onWoodChanged", levelData.getResourceValue(ResourceType.Wood), levelData.getResourceCapacity(ResourceType.Wood));
+        this.woodProgress.progress = levelData.getResourceValue(ResourceType.Wood) / levelData.getResourceCapacity(ResourceType.Wood);
+        this.woodLabel.string = `${levelData.getResourceValue(ResourceType.Wood)}/${levelData.getResourceCapacity(ResourceType.Wood)}`;
     }
 }

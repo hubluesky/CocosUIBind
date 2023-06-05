@@ -10,7 +10,7 @@ export default abstract class ArrayDatabase<T extends Prototype> extends Databas
     public get prototypeLength() { return this.prototypeList.length; }
 
     protected onLoad(): Promise<void> | void {
-        let result = this.OnLoadArray();
+        let result = this.onLoadArray();
         if (result instanceof Promise)
             return this.waitForPrototypeList(result);
         this._prototypeList = result;
@@ -38,7 +38,7 @@ export default abstract class ArrayDatabase<T extends Prototype> extends Databas
     }
 
     /** 加载代码原型列表配置 */
-    protected OnLoadArray(): Promise<T[]> | T[] { return null; }
+    protected onLoadArray(): Promise<T[]> | T[] { return null; }
     /** 加载Json原型列表配置 */
     protected async OnLoadJsonArray(json: Object): Promise<T[]> { return null; }
     /** 加载二进制原型列表配置 */

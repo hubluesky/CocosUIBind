@@ -336,7 +336,7 @@ declare global {
     type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
     type ObjectProperties<T> = ObjectExclude<T, Function>;
     type ObjectFunctions<T> = ObjectInclude<T, Function>;
-    type ArrayElement<Array> = Array extends readonly (infer ElementType)[] ? ElementType : never;
+    type ArrayElement<T> = T extends readonly (infer E)[] ? E : never;
 
     type Enumerate<N extends number, Acc extends number[] = []> = Acc['length'] extends N ? Acc[number] : Enumerate<N, [...Acc, Acc['length']]>;
     type UintRange<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>;

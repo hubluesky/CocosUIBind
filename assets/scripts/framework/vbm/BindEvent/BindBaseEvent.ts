@@ -8,7 +8,7 @@ export abstract class BindBaseEvent<T> {
     private _bindSource: T;
     public get bindSource() { return this._bindSource; }
 
-    public bindObject(instance: T): T {
+    public bindObject(instance: Readonly<T>): T {
         this.unbindObject();
         const newInstance = this.makeBindProxy(instance);
         newInstance.__bindChangedEvent__.addEvent(this.onEventChanged, this);
