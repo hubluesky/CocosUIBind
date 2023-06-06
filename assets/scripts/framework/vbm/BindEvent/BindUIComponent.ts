@@ -94,7 +94,7 @@ export default abstract class BindUIComponent extends Component {
         }
     }
 
-    public removeUnbindObject<T extends Object>(instance: T): void {
+    public removeBindObject<T extends Object>(instance: T): void {
         let target = this.bindList?.find(v => v.dataType == instance.constructor);
         if (target == null)
             return console.warn(`BindObject failed! ${this.constructor.name} has not bind target ${instance.constructor.name}`);

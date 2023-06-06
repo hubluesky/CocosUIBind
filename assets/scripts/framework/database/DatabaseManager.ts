@@ -8,7 +8,6 @@ export function registerDatabase(assetName?: string): Function {
     };
 }
 
-// type Type<T extends Database> = { prototype: T; };
 type TypeDatabase = AnyConstructor<Database>;
 
 export default class DatabaseManager {
@@ -34,7 +33,6 @@ export default class DatabaseManager {
     }
 
     public static createDatabase<T extends Database>(type: AnyConstructor<T>): T {
-        // const database = Object.createInstance<T>(type);
         const database = new type();
         DatabaseManager.databaseMap.set(type, database);
         return database;

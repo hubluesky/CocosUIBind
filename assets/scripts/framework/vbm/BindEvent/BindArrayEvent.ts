@@ -19,7 +19,7 @@ export default class BindArrayEvent<T> extends BindBaseEvent<T[]>{
     }
 
     protected makeBindProxy(instance: T[]) {
-        return makeBindArrayProxy(instance);
+        return makeBindArrayProxy(instance, true);
     }
 
     public onEventChanged(array: T[], eventType: BindArrayEventType, key: PropertyKey, value: T, oldValue: T): void {

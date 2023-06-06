@@ -9,16 +9,16 @@ export interface OnBindChangedEvent<T> extends BaseChangedEvent {
     __bindChangedEvent__: ActionEvent<[T, PropertyKey, any]>;
 }
 
-export function isBindObject<T>(instance: T): boolean {
+export function isBindObject(instance: any): instance is BaseChangedEvent {
     return Object.hasProperty<BaseChangedEvent>(instance, "__proxy__");
 }
 
 type IsArray<T> = T extends Array<any> ? true : false;
 
 export function makeBindDataProxy<T>(instance: T): T & OnBindChangedEvent<T> {
-    if (Object.hasProperty<BaseChangedEvent>(instance, "__proxy__") && instance.__proxy__ != null) return instance.__proxy__;
+    if (isBindObject(instance) && instance.__proxy__ != null) return instance.__proxy__;
     type ProxyType = T & OnBindChangedEvent<T>;
-    let newInstance: ProxyType = instance as ProxyType;
+    const newInstance: ProxyType = instance as ProxyType;
     newInstance.__bindChangedEvent__ = new ActionEvent<[T, PropertyKey, any]>();
 
     newInstance.__proxy__ = new Proxy(newInstance, {
@@ -43,16 +43,23 @@ export interface OnBindArrayChangedEvent<T> extends BaseChangedEvent {
     __bindChangedEvent__: ActionEvent<[T[], BindArrayEventType, PropertyKey, T, T]>;
 }
 
-export function makeBindArrayProxy<T>(instance: T[]): T[] & OnBindArrayChangedEvent<T> {
-    if (Object.hasProperty<OnBindArrayChangedEvent<T>>(instance, "__proxy__") && instance.__proxy__ != null) return instance.__proxy__;
+export function makeBindArrayProxy<T>(instance: T[], bindElements: boolean): T[] & OnBindArrayChangedEvent<T> {
+    if (isBindObject(instance) && instance.__proxy__ != null) return instance.__proxy__;
 
     type ProxyType = T[] & OnBindArrayChangedEvent<T>;
-    let newInstance: ProxyType = instance as ProxyType;
+    const newInstance: ProxyType = instance as ProxyType;
     newInstance.__bindChangedEvent__ = new ActionEvent<[T[], BindArrayEventType, PropertyKey, T, T]>();
+
+    if (bindElements) {
+        for (let i = 0; i < newInstance.length; i++) {
+            if (typeof newInstance[i] != "object") continue;
+            newInstance[i] = makeBindDataProxy(newInstance[i]);
+        }
+    }
 
     newInstance.__proxy__ = new Proxy(newInstance, {
         set(target: ProxyType, key: PropertyKey, value: any, receiver: any): boolean {
-            let oldValue = target[key];
+            const oldValue = target[key];
             if (oldValue === value) return true;
             let eventType: BindArrayEventType = BindArrayEventType.Unknow;
             if (key === "length") {
@@ -66,7 +73,7 @@ export function makeBindArrayProxy<T>(instance: T[]): T[] & OnBindArrayChangedEv
                     eventType = BindArrayEventType.Add;
                 }
             }
-            target[key] = value;
+            target[key] = (bindElements && typeof value == "object") ? makeBindDataProxy(value) : value;
             target.__bindChangedEvent__.dispatchAction(target, eventType, key, value, oldValue);
             return true;
         }

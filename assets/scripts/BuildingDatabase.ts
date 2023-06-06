@@ -14,6 +14,7 @@ export default class BuildingDatabase extends ArrayDatabase<BuildingPrototype> {
             new BuildingPrototype(1, "MainBuilding"),
             new BuildingPrototype(2, "Wood"),
             new BuildingPrototype(3, "Ore"),
+            new BuildingPrototype(4, "abc"),
         ];
     }
 }

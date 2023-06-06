@@ -5,7 +5,7 @@ import Database, { Prototype } from "./Database";
 export default abstract class ArrayDatabase<T extends Prototype> extends Database {
     protected _prototypeList: T[];
     /** 原型列表 */
-    public get prototypeList(): ReadonlyArray<T> { return this._prototypeList; }
+    public get prototypeList(): readonly T[] { return this._prototypeList; }
     public get length() { return this.prototypeList.length; }
     public get prototypeLength() { return this.prototypeList.length; }
 
