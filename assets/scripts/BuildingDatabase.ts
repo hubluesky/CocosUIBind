@@ -9,7 +9,7 @@ export class BuildingPrototype implements Prototype {
 
 @registerDatabase()
 export default class BuildingDatabase extends ArrayDatabase<BuildingPrototype> {
-    protected onLoadArray(): BuildingPrototype[] {
+    protected parseDatabase(): BuildingPrototype[] {
         return [
             new BuildingPrototype(1, "MainBuilding"),
             new BuildingPrototype(2, "Wood"),

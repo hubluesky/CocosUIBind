@@ -1,7 +1,7 @@
 import { Label, Sprite, _decorator } from "cc";
 import BindArrayItemComponent from "framework/vbm/BindEvent/BindArrayItemComponent";
 import { BuildingPrototype } from "./BuildingDatabase";
-import { bindUIField } from "framework/vbm/BindEvent/BindUIManager";
+import { bindUIField } from "framework/vbm/BindEvent/RegisterBindUI";
 
 const { ccclass, property } = _decorator;
 @ccclass

@@ -1,6 +1,6 @@
 import { _decorator, Component, Node } from 'cc';
-import ViewUIManager from 'framework/vbm/Views/ViewUIManager';
 import { LevelUI } from './LevelUI';
+import ViewUIManager from 'framework/vbm/Views/ViewUIManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('LevelManager')
