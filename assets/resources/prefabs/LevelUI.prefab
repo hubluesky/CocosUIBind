@@ -1550,24 +1550,6 @@
     "fileId": "c5ITefWK5JSI+meQGF+VWI"
   },
   {
-    "__type__": "8969c2wTD9N9ooIZFyX+Jk2",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 46
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 70
-    },
-    "indexOffset": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "09vPOyF2ZIW7cmOldfP+iU"
-  },
-  {
     "__type__": "cc.Layout",
     "_name": "",
     "_objFlags": 0,
@@ -1576,7 +1558,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 72
+      "__id__": 70
     },
     "_resizeMode": 0,
     "_layoutType": 1,
@@ -1603,6 +1585,24 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "5aS/x8uN5Ila4dsO5n/Ww1"
+  },
+  {
+    "__type__": "bbf5cNfNp9MP4ixmVu0QsK0",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 46
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 72
+    },
+    "indexOffset": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "78qYH8Cm1JZb05rKysPI29"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -1703,7 +1703,7 @@
       "__id__": 34
     },
     "buildingList": {
-      "__id__": 69
+      "__id__": 71
     },
     "_id": ""
   },

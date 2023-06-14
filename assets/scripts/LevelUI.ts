@@ -1,19 +1,19 @@
 import { _decorator, Label, ProgressBar } from 'cc';
-import BindArrayComponent from 'framework/vbm/BindEvent/BindArrayComponent';
-import { bindUIArrayField, bindUIField } from 'framework/vbm/BindEvent/RegisterBindUI';
-import ModelManager from 'framework/vbm/Models/ModelManager';
-import { registerView } from 'framework/vbm/Views/RegisterView';
-import { ViewLayer } from 'framework/vbm/Views/ViewConfig';
-import ViewUIComponent from 'framework/vbm/Views/ViewUIComponent';
+import DatabaseManager from 'framework/database/DatabaseManager';
+import BindArrayComponent from 'framework/vbm/bindEvent/BindArrayComponent';
+import BindUIComponent from 'framework/vbm/bindEvent/BindUIComponent';
+import { bindUIArrayField, bindUIField } from 'framework/vbm/bindEvent/RegisterBindUI';
+import ModelManager from 'framework/vbm/models/ModelManager';
+import { ViewLayer } from 'framework/vbm/views/ViewConfig';
+import BuildingDatabase from './BuildingDatabase';
 import LevelData from './LevelData';
 import { ResourceType } from './ResourceType';
-import DatabaseManager from 'framework/database/DatabaseManager';
-import BuildingDatabase from './BuildingDatabase';
+import { registerView } from 'framework/vbm/views/RegisterView';
 const { ccclass, property } = _decorator;
 
 @ccclass('LevelUI')
 @registerView("LevelUI", ViewLayer.NormalLayer)
-export class LevelUI extends ViewUIComponent {
+export class LevelUI extends BindUIComponent {
     @property(ProgressBar)
     @bindUIArrayField(LevelData, "resourceCapacitys", (ui, up, array, et, k, v, ov) => ui.onWoodChanged())
     @bindUIArrayField(LevelData, "resourceValues", (ui, up, array, et, k, v, ov) => ui.onWoodChanged())
@@ -46,6 +46,10 @@ export class LevelUI extends ViewUIComponent {
         this.scheduleOnce(() => {
             prototypeList[0].name = "8858";
         }, 2);
+    }
+
+    onDestroy():void {
+        ModelManager.destroyModel(LevelData);
     }
 
     private onWoodChanged(): void {

@@ -1,6 +1,6 @@
-import { registerBindObject } from "framework/vbm/BindEvent/RegisterBindObject";
+import { registerBindObject } from "framework/vbm/bindEvent/RegisterBindObject";
 import { ResourceType } from "./ResourceType";
-import Serializable, { serializeClass, serializeField } from "framework/vbm/Storage/Serializable";
+import Serializable, { serializeClass, serializeField } from "framework/vbm/storage/Serializable";
 
 @serializeClass("ld")
 @registerBindObject
