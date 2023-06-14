@@ -1,0 +1,3 @@
+[submodule "assets/scripts/framework"]
+	path = assets/scripts/framework
+	url = git@gitlab.mobvista.com:projects_playable/hubluesky/CocosCreator/framework.git
