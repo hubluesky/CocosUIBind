@@ -1,5 +1,4 @@
-import { Component } from "cc";
-import { Label, ProgressBar, UIOpacity, _decorator, tween } from "cc";
+import { Component, Label, ProgressBar, _decorator, tween } from "cc";
 
 const { ccclass, property, menu } = _decorator;
 @ccclass

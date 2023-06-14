@@ -4,6 +4,7 @@ import BindArrayComponent from "./BindArrayComponent";
 import BindArrayEvent from "./BindArrayEvent";
 import BindUIComponent from "./BindUIComponent";
 import { ArrayElementChanged, PropertyChanged } from "./BindUIManager";
+import { BindArrayEventType } from "./RegisterBindObject";
 
 export default class BindUIHandlerManager {
 
@@ -53,6 +54,7 @@ export default class BindUIHandlerManager {
                 //     // return;
                 // }
                 data[dataPropertyName] = bindArrayEvent.bindObject(value) as D[P];
+                bindArrayEvent.onEventChanged(value, BindArrayEventType.Unknow, null, null, null);
             }
             // onPropertyChanged();
         };

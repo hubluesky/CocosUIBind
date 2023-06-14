@@ -1,5 +1,4 @@
-import { resources } from "cc";
-import { Asset, director } from "cc";
+import { Asset, director, resources } from "cc";
 
 export enum LoadUrlType {
     /** 本地资源 */

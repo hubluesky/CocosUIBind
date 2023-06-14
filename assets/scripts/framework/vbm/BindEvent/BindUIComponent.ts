@@ -4,9 +4,8 @@ import BindUIHandlerManager from "./BindUIHandlerManager";
 import BindUIManager, { ArrayElementChanged, BindUIPropertyDesc, PropertyChanged } from "./BindUIManager";
 
 interface BindTarget<T> {
-    event: BindObjectEvent<T>;
+    bindEvent: BindObjectEvent<T>;
     dataType: AnyConstructor<T>;
-    // TODO remove
     bindTarget?: T;
     propertiesName: ObjectProperties<T>[];
 }
@@ -25,7 +24,7 @@ export default abstract class BindUIComponent extends Component {
         if (this.bindList == null) return;
         for (let bind of this.bindList) {
             if (bind.bindTarget == null) continue;
-            bind.event.bindObject(bind.bindTarget);
+            bind.bindEvent.bindObject(bind.bindTarget);
         }
         this.initAllBindObjectProtopertes();
     }
@@ -39,7 +38,7 @@ export default abstract class BindUIComponent extends Component {
         if (this.bindList == null) return;
         for (let bind of this.bindList) {
             if (bind.bindTarget == null) continue;
-            bind.event.unbindObject();
+            bind.bindEvent.unbindObject();
         }
     }
 
@@ -62,19 +61,19 @@ export default abstract class BindUIComponent extends Component {
     /** 初始化所有绑定属性值，通知属性修改回调。 */
     private initPropertyValues<T>(bindTarget: BindTarget<T>): void {
         for (let propertyName of bindTarget.propertiesName) {
-            bindTarget.event.onEventChanged(bindTarget.bindTarget, propertyName, bindTarget.bindTarget[propertyName]);
+            bindTarget.bindEvent.onEventChanged(bindTarget.bindTarget, propertyName, bindTarget.bindTarget[propertyName]);
         }
     }
 
     private initPropertiesChanged<DC extends AnyConstructor, DI extends InstanceType<DC>>(propertiesDesc: BindUIPropertyDesc<BindUIComponent, DI>[], dataType: DC): void {
-        let bindTarget: BindTarget<DI> = { event: new BindObjectEvent<DI>(), dataType: dataType, propertiesName: [] };
+        let bindTarget: BindTarget<DI> = { bindEvent: new BindObjectEvent<DI>(), dataType: dataType, propertiesName: [] };
         for (let propertyDesc of propertiesDesc) {
             const uiPropertyValue = this[propertyDesc.uiPropertyName as any];
             const propertyChanged = propertyDesc.isArray ? BindUIHandlerManager.getUIArrayHandler<BindUIComponent, DI>(this, uiPropertyValue, propertyDesc.dataPropertyName, propertyDesc.onPropertyChanged as ArrayElementChanged<BindUIComponent, any>)
                 : (propertyDesc.onPropertyChanged as PropertyChanged<BindUIComponent, DI> ?? BindUIHandlerManager.getUIHandler(uiPropertyValue));
 
             bindTarget.propertiesName.push(propertyDesc.dataPropertyName);
-            bindTarget.event.addPropertyChanged(propertyDesc.dataPropertyName, (data, value) => {
+            bindTarget.bindEvent.addPropertyChanged(propertyDesc.dataPropertyName, (data, value) => {
                 propertyChanged(this, uiPropertyValue, data, value);
             });
         }
@@ -86,10 +85,10 @@ export default abstract class BindUIComponent extends Component {
         if (target == null)
             return console.warn(`BindObject failed! ${this.constructor.name} has not bind target ${instance.constructor.name}`);
         if (target.bindTarget != null)
-            target.event.unbindObject();
+            target.bindEvent.unbindObject();
         target.bindTarget = instance;
         if (this.enabledInHierarchy) {
-            target.event.bindObject(instance);
+            target.bindEvent.bindObject(instance);
             this.initPropertyValues(target);
         }
     }
@@ -98,7 +97,7 @@ export default abstract class BindUIComponent extends Component {
         let target = this.bindList?.find(v => v.dataType == instance.constructor);
         if (target == null)
             return console.warn(`BindObject failed! ${this.constructor.name} has not bind target ${instance.constructor.name}`);
-        target.event.unbindObject();
+        target.bindEvent.unbindObject();
         target.bindTarget = null;
     }
 
@@ -106,7 +105,7 @@ export default abstract class BindUIComponent extends Component {
         if (this.bindList == null) return;
         for (let bind of this.bindList) {
             if (bind.bindTarget == null) continue;
-            bind.event.unbindObject();
+            bind.bindEvent.unbindObject();
             bind.bindTarget = null;
         }
     }

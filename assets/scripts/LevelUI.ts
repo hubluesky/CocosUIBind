@@ -45,13 +45,13 @@ export class LevelUI extends ViewUIComponent {
         //     }, i + 1);
         // }
 
-        const buildingDatabase = DatabaseManager.get(BuildingDatabase);
-        const prototypeList = this.buildingList.bindArrayEvent.bindObject(Array.from(buildingDatabase.prototypeList));
+        // const buildingDatabase = DatabaseManager.get(BuildingDatabase);
+        // const prototypeList = this.buildingList.bindArrayEvent.bindObject(Array.from(buildingDatabase.prototypeList));
 
-        this.scheduleOnce(() => {
-            // prototypeList[0] = new BuildingPrototype(999, "fddfd");
-            prototypeList[0].name = "8858";
-        }, 2);
+        // this.scheduleOnce(() => {
+        //     // prototypeList[0] = new BuildingPrototype(999, "fddfd");
+        //     prototypeList[0].name = "8858";
+        // }, 2);
     }
 
     private onWoodChanged(): void {
