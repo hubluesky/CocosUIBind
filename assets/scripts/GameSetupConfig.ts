@@ -2,6 +2,7 @@ import { director } from "cc";
 import AssetManager from "framework/asset/AssetManager";
 import NodePool from "framework/asset/NodePool";
 import DatabaseManager from "framework/database/DatabaseManager";
+import { ILoadTask } from "framework/loading/LoadingManager";
 import SetupConfig, { registerSetupConfig } from "framework/setup/SetupConfig";
 import { registerSystemSetup } from "framework/setup/SystemSetupManager";
 import ModelManager from "framework/vbm/models/ModelManager";
@@ -9,11 +10,13 @@ import SaveManager from "framework/vbm/storage/SaveManager";
 import ViewControllerFactory from "framework/vbm/views/ViewControllerFactory";
 import ViewUIManager from "framework/vbm/views/ViewUIManager";
 
-@registerSetupConfig()
+@registerSetupConfig
 export default class GameSetupConfig extends SetupConfig {
-    public finalize() {
-        const levelManager = director.getScene().getChildByName("LevelManager");
-        levelManager.active = true;
+
+    public getAsyncPreloadAssets(): ILoadTask[] {
+        return [
+            this.createUITask("LevelUI")
+        ];
     }
 
     @registerSystemSetup(100)
@@ -29,7 +32,7 @@ export default class GameSetupConfig extends SetupConfig {
     @registerSystemSetup(300)
     static InitViewUIManager(config: SetupConfig) {
         // director.addPersistRootNode(config.canvas.node);
-        ViewUIManager.Initialize(config.canvas, ViewControllerFactory.create, config.uiPath);
+        ViewUIManager.initialize(config.canvas, ViewControllerFactory.create, "prefabs/");
     }
 
     @registerSystemSetup(400)

@@ -1,10 +1,10 @@
 import { registerBindObject } from "framework/vbm/bindEvent/RegisterBindObject";
 import { ResourceType } from "./ResourceType";
-import Serializable, { serializeClass, serializeField } from "framework/vbm/storage/Serializable";
+import { serializeClass, serializeField } from "framework/vbm/storage/Serializable";
 
 @serializeClass("ld")
 @registerBindObject
-export default class LevelData extends Serializable {
+export default class LevelData {
     /** 资源总容量 */
     @serializeField("a")
     readonly resourceCapacitys: ResourceType[] = [0, 0];
@@ -16,6 +16,8 @@ export default class LevelData extends Serializable {
     readonly resourceValues: ResourceType[] = [0, 0];
 
     testNumber = 3;
+    testMaxNumber = 100;
+    testString = "stringABC";
 
     /**
      * 获得资源容量

@@ -1077,7 +1077,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Button",
+    "_name": "Item",
     "_objFlags": 0,
     "_parent": {
       "__id__": 46

@@ -7,6 +7,7 @@ const { ccclass, property } = _decorator;
 @ccclass
 export default class LevelBuildingItem extends BindArrayItemComponent {
     @property(Sprite)
+    @bindUIField(BuildingPrototype, "iconPath")
     readonly iconSprite: Sprite = null;
     @property(Label)
     @bindUIField(BuildingPrototype, "name")

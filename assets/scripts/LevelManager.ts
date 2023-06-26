@@ -5,7 +5,8 @@ const { ccclass, property } = _decorator;
 
 @ccclass('LevelManager')
 export class LevelManager extends Component {
-    onLoad() {
+    initialize() {
+        ViewUIManager.showView("Background");
         ViewUIManager.showView(LevelUI);
     }
 }
